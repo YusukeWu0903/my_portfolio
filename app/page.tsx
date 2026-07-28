@@ -1,4 +1,4 @@
-import WaterSort from './WaterSort';
+import WaterSort from "./WaterSort";
 
 export default function Home() {
   return (

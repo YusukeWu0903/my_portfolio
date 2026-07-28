@@ -13,7 +13,7 @@ const COLOR_MAP: { [key: string]: string } = {
   O: "bg-orange-500",
 };
 
-// 獨立的反向推演生成器：確保 100% 可解，並真正打亂顏色
+// 獨立的反向推演生成器
 function generateLevel(numColors = 4, numEmpty = 2, shuffleSteps = 60) {
   const colors = Object.keys(COLOR_MAP);
   const selectedColors = colors.slice(0, numColors);
@@ -52,12 +52,13 @@ function generateLevel(numColors = 4, numEmpty = 2, shuffleSteps = 60) {
 }
 
 export default function WaterSort() {
-  const [currentLevel, setCurrentLevel] = useState(1);
   const MAX_LEVELS = 3;
-
+  const [currentLevel, setCurrentLevel] = useState(1);
+  
   const [gameState, setGameState] = useState<string[][]>(() => generateLevel(3, 2, 60));
   const [selectedBottle, setSelectedBottle] = useState<number | null>(null);
   const [isWon, setIsWon] = useState(false);
+  const [isDebug, setIsDebug] = useState(false);
 
   const initGame = useCallback((level: number) => {
     const numColors = level + 2; 
@@ -120,9 +121,20 @@ export default function WaterSort() {
 
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-neutral-950 min-h-[500px] text-neutral-100 rounded-xl relative">
-      
       <div className="absolute top-6 left-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400 text-xs font-mono">
         LEVEL: <span className="text-cyan-400 font-bold">{currentLevel} / {MAX_LEVELS}</span>
+      </div>
+
+      <div className="absolute top-6 right-6 flex items-center gap-3">
+        <span className="text-emerald-400 font-mono text-xs px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20">
+          v1.2.0-STABLE
+        </span>
+        <button 
+          onClick={() => setIsDebug(!isDebug)}
+          className="px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400 text-xs font-mono hover:text-white transition-colors"
+        >
+          DEBUG: {isDebug ? "ON" : "OFF"}
+        </button>
       </div>
 
       {isWon && (
@@ -157,12 +169,10 @@ export default function WaterSort() {
           <div
             key={idx}
             onClick={() => handleBottleClick(idx)}
-            /* 修正點 1：將 flex-col-reverse 改為標準的 flex-col */
             className={`w-16 h-52 border-2 border-neutral-700 rounded-b-xl flex flex-col p-1 gap-1 cursor-pointer transition-all duration-300 ${
               selectedBottle === idx ? "-translate-y-4 ring-2 ring-cyan-400 bg-neutral-900 shadow-[0_0_15px_rgba(34,211,238,0.2)]" : "bg-neutral-800"
             }`}
           >
-            {/* 修正點 2：強制用 [3, 2, 1, 0] 的順序由上往下渲染，確保水疊加的方向 100% 正確 */}
             {[3, 2, 1, 0].map((layerIdx) => (
               <div 
                 key={layerIdx} 
@@ -174,6 +184,18 @@ export default function WaterSort() {
           </div>
         ))}
       </div>
+
+      {isDebug && (
+        <div className="w-full max-w-3xl mt-12 p-4 bg-neutral-900 border border-red-500/50 rounded-lg text-xs font-mono text-green-400 overflow-auto max-h-64 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+          <p className="text-red-400 mb-2 border-b border-red-500/30 pb-1">[ SYSTEM_DEBUGGER_ACTIVE - VERSION 1.2.0 (STABLE) ]</p>
+          <div className="flex gap-8 mb-4">
+            <p>Selected Bottle: <span className="text-white font-bold">{selectedBottle !== null ? selectedBottle : "null"}</span></p>
+            <p>Is Won: <span className="text-white font-bold">{isWon.toString()}</span></p>
+          </div>
+          <p className="mb-1">Current State Array (gameState):</p>
+          <pre className="text-green-300">{JSON.stringify(gameState, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
