@@ -157,11 +157,13 @@ export default function WaterSort() {
           <div
             key={idx}
             onClick={() => handleBottleClick(idx)}
-            className={`w-16 h-52 border-2 border-neutral-700 rounded-b-xl flex flex-col-reverse p-1 gap-1 cursor-pointer transition-all duration-300 ${
+            /* 修正點 1：將 flex-col-reverse 改為標準的 flex-col */
+            className={`w-16 h-52 border-2 border-neutral-700 rounded-b-xl flex flex-col p-1 gap-1 cursor-pointer transition-all duration-300 ${
               selectedBottle === idx ? "-translate-y-4 ring-2 ring-cyan-400 bg-neutral-900 shadow-[0_0_15px_rgba(34,211,238,0.2)]" : "bg-neutral-800"
             }`}
           >
-            {[0, 1, 2, 3].map((layerIdx) => (
+            {/* 修正點 2：強制用 [3, 2, 1, 0] 的順序由上往下渲染，確保水疊加的方向 100% 正確 */}
+            {[3, 2, 1, 0].map((layerIdx) => (
               <div 
                 key={layerIdx} 
                 className={`w-full flex-1 rounded-sm transition-colors duration-300 ${
