@@ -52,6 +52,10 @@ function generateLevel(numColors = 4, numEmpty = 2, shuffleSteps = 60) {
   return state;
 }
 
+// 檢查瓶子是否已完成並鎖定（4層且顏色完全相同）
+const isBottleLocked = (bottle: string[]) =>
+  bottle.length === 4 && new Set(bottle).size === 1;
+
 export default function WaterSort() {
   const [gameState, setGameState] = useState<string[][]>(() => generateLevel());
   const [selectedBottle, setSelectedBottle] = useState<number | null>(null);
@@ -66,8 +70,15 @@ export default function WaterSort() {
   const handleBottleClick = (idx: number) => {
     if (isWon) return;
 
+    const currentBottle = gameState[idx];
+
+    // 如果瓶子已鎖定，禁止選取或倒入
+    if (isBottleLocked(currentBottle)) return;
+
     if (selectedBottle === null) {
-      if (gameState[idx].length > 0) setSelectedBottle(idx);
+      if (currentBottle.length > 0) {
+        setSelectedBottle(idx);
+      }
     } else {
       if (selectedBottle === idx) {
         setSelectedBottle(null);
@@ -92,8 +103,8 @@ export default function WaterSort() {
           newState[idx] = dst;
           setGameState(newState);
 
-          // 檢查過關邏輯
-          if (newState.every(b => b.length === 0 || (b.length === 4 && new Set(b).size === 1))) {
+          // 檢查過關邏輯：所有非空瓶子都必須是已鎖定狀態（或者全部空，雖然一般不會）
+          if (newState.every((b) => b.length === 0 || isBottleLocked(b))) {
             setIsWon(true);
           }
         }
@@ -116,20 +127,33 @@ export default function WaterSort() {
         </div>
       )}
 
-      <div className="flex flex-wrap justify-center gap-6">
-        {gameState.map((bottle, idx) => (
-          <div
-            key={idx}
-            onClick={() => handleBottleClick(idx)}
-            className={`w-16 h-48 border-2 border-neutral-700 rounded-b-xl flex flex-col-reverse p-1 cursor-pointer transition-all duration-300 ${
-              selectedBottle === idx ? "-translate-y-4 ring-2 ring-cyan-400 bg-neutral-900" : "bg-neutral-800"
-            }`}
-          >
-            {bottle.map((color, cIdx) => (
-              <div key={cIdx} className={`w-full h-11 ${COLOR_MAP[color] || 'bg-white'}`} />
-            ))}
-          </div>
-        ))}
+      <div className="flex flex-wrap justify-center gap-6 pt-4">
+        {gameState.map((bottle, idx) => {
+          const locked = isBottleLocked(bottle);
+          return (
+            <div
+              key={idx}
+              onClick={() => handleBottleClick(idx)}
+              className={`relative w-16 h-48 border-2 rounded-b-xl flex flex-col-reverse p-1 transition-all duration-300 ${
+                locked
+                  ? "border-cyan-500/80 bg-neutral-900/80 shadow-[0_0_15px_rgba(34,211,238,0.3)] cursor-not-allowed"
+                  : selectedBottle === idx
+                  ? "-translate-y-4 ring-2 ring-cyan-400 bg-neutral-900 border-neutral-600 cursor-pointer"
+                  : "border-neutral-700 bg-neutral-800 cursor-pointer hover:border-neutral-500"
+              }`}
+            >
+              {/* 蓋子 / 鎖定標示 */}
+              {locked && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-10 h-3 bg-cyan-400 rounded-sm shadow-[0_0_10px_rgba(34,211,238,0.9)] z-10 flex items-center justify-center">
+                  <div className="w-3 h-1 bg-neutral-950 rounded-full"></div>
+                </div>
+              )}
+              {bottle.map((color, cIdx) => (
+                <div key={cIdx} className={`w-full h-11 rounded-sm ${COLOR_MAP[color] || 'bg-white'}`} />
+              ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
