@@ -1,3 +1,5 @@
+import WaterSort from './WaterSort';
+
 export default function Home() {
   return (
     <main className="max-w-5xl mx-auto px-6 py-20">
@@ -70,6 +72,19 @@ export default function Home() {
               <span className="text-xs font-mono text-neutral-500">Vercel Deployed</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Interactive Module Section: Water Sort */}
+      <section className="py-10 border-t border-neutral-800/50 mt-10">
+        <h2 className="text-2xl font-mono font-bold mb-10 flex items-center gap-3">
+          <span className="text-cyan-500">{">"}</span> SYSTEM.TEST_MODULE( &apos;Water_Sort&apos; )
+        </h2>
+        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-8 shadow-[0_0_30px_rgba(34,211,238,0.05)]">
+          <p className="text-neutral-400 text-sm mb-8 text-center font-mono">
+            [ 初始化演算法驗證模組：請點擊瓶子將相同顏色的液體分類 ]
+          </p>
+          <WaterSort />
         </div>
       </section>
     </main>
