@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 // 科技感配色定義
 const COLOR_MAP: { [key: string]: string } = {
@@ -55,10 +55,14 @@ export default function WaterSort() {
   const MAX_LEVELS = 3;
   const [currentLevel, setCurrentLevel] = useState(1);
   
-  const [gameState, setGameState] = useState<string[][]>(() => generateLevel(3, 2, 60));
+  // 1. 這裡必須是空陣列，絕對不能在這裡呼叫 generateLevel！
+  const [gameState, setGameState] = useState<string[][]>([]);
   const [selectedBottle, setSelectedBottle] = useState<number | null>(null);
   const [isWon, setIsWon] = useState(false);
   const [isDebug, setIsDebug] = useState(false);
+  
+  // 2. 必須加入這個掛載狀態
+  const [isMounted, setIsMounted] = useState(false);
 
   const initGame = useCallback((level: number) => {
     const numColors = level + 2; 
@@ -69,6 +73,12 @@ export default function WaterSort() {
     setSelectedBottle(null);
     setIsWon(false);
   }, []);
+
+  // 3. 必須加入 useEffect，讓亂數在瀏覽器端才執行
+  useEffect(() => {
+    setIsMounted(true);
+    initGame(1);
+  }, [initGame]);
 
   const handleNextLevel = () => {
     const next = currentLevel + 1;
@@ -82,6 +92,7 @@ export default function WaterSort() {
   };
 
   const handleBottleClick = (idx: number) => {
+    // ... (保留你原本的 handleBottleClick 邏輯，這裡不需要改) ...
     if (isWon) return;
 
     if (selectedBottle === null) {
@@ -118,6 +129,15 @@ export default function WaterSort() {
       }
     }
   };
+
+  // 4. 必須加入這段防護機制：在客戶端準備好之前，先顯示載入中
+  if (!isMounted) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 bg-neutral-950 min-h-[500px] rounded-xl">
+        <p className="text-cyan-400 font-mono animate-pulse">INITIALIZING_SYSTEM...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center p-8 bg-neutral-950 min-h-[500px] text-neutral-100 rounded-xl relative">
