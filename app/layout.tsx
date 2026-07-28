@@ -17,7 +17,7 @@ export default function RootLayout({
         <nav className="border-b border-neutral-800 bg-neutral-950/50 backdrop-blur-md sticky top-0 z-50">
           <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
             <div className="font-bold text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_10px_rgba(34,211,238,0.4)]">
-              // LOGO
+              LOGO
             </div>
             <div className="flex gap-6 text-sm font-medium">
               <a href="#" className="hover:text-cyan-400 transition-colors">首頁</a>
