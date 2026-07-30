@@ -102,7 +102,7 @@ export default function Home() {
 
            <div className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-neutral-800/50 mt-4 pt-4">
              <a 
-               href="https://https://material-downloader-ttnv95mw5cqepbglpwog2j.streamlit.app/" 
+               href="https://material-downloader-ttnv95mw5cqepbglpwog2j.streamlit.app/" 
                target="_blank" 
                rel="noopener noreferrer"
                className="inline-flex items-center gap-2 px-4 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all"
