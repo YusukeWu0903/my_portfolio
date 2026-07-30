@@ -73,7 +73,47 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+        {/* Project Card: Material Downloader (新追加的素材庫專案) */}
+        <div className="group relative rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] flex flex-col justify-between">
+           <div>
+             <div className="h-48 bg-neutral-950 flex items-center justify-center border-b border-neutral-800 relative overflow-hidden group-hover:bg-neutral-900/50 transition-colors">
+               <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/20 to-blue-900/20 z-10"></div>
+               <span className="text-neutral-500 font-mono text-sm z-20 group-hover:text-cyan-400 transition-colors">
+                 [ STREAMLIT FUI ENGINE ]
+               </span>
+             </div>
+             
+             <div className="p-6">
+               <div className="flex justify-between items-start mb-4">
+                 <h3 className="text-xl font-bold group-hover:text-cyan-400 transition-colors">AI 影音素材庫與自動化爬蟲</h3>
+                 <span className="text-xs font-mono px-2 py-1 bg-neutral-800 rounded text-neutral-400 border border-neutral-700">v2.0.0</span>
+               </div>
+               <p className="text-neutral-400 text-sm mb-6 line-clamp-3">
+                 整合 YAMNet AI 音訊特徵分析與 SQLite WAL 並發資料庫的內部素材檢索庫。內建雙向中文標籤翻譯，並採用賽博龐克 FUI 介面。
+               </p>
+               <div className="flex gap-2 flex-wrap mb-6">
+                 <span className="text-xs px-2 py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Python</span>
+                 <span className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Streamlit FUI</span>
+                 <span className="text-xs px-2 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">YAMNet AI</span>
+                 <span className="text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">SQLite</span>
+               </div>
+             </div>
+           </div>
+
+           <div className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-neutral-800/50 mt-4 pt-4">
+             <a 
+               href="https://https://material-downloader-ttnv95mw5cqepbglpwog2j.streamlit.app/" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 px-4 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all"
+             >
+               <span>開啟系統 (Live Demo)</span>
+               <span>↗</span>
+             </a>
+             <span className="text-xs font-mono text-neutral-500">Streamlit Cloud</span>
+           </div>
+         </div>
+     </section>
 
       {/* Interactive Module Section: Water Sort */}
       <section className="py-10 border-t border-neutral-800/50 mt-10">
