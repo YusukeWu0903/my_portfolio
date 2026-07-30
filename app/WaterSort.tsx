@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { WaterSortLevelData } from "@/app/types/level";
+import { DEFAULT_LEVELS as INITIAL_LEVELS } from "@/app/data/levels";
 
 // 科技感配色定義
 const COLOR_MAP: { [key: string]: string } = {
@@ -13,48 +15,94 @@ const COLOR_MAP: { [key: string]: string } = {
   O: "bg-orange-500",
 };
 
-// 獨立的反向推演生成器
+// 檢查單一瓶子是否為 4 層滿且同色
+function isFullySameColor(bottle: string[]) {
+  return bottle.length === 4 && new Set(bottle).size === 1;
+}
+
+// 獨立的反向推演生成器（加入防同色滿管驗證）
 function generateLevel(numColors = 4, numEmpty = 2, shuffleSteps = 60) {
   const colors = Object.keys(COLOR_MAP);
-  const selectedColors = colors.slice(0, numColors);
-  const state: string[][] = selectedColors.map((c) => [c, c, c, c]);
-  for (let i = 0; i < numEmpty; i++) state.push([]);
+  const selectedColors = colors.slice(0, Math.min(numColors, colors.length));
+  
+  let state: string[][] = [];
+  let attempts = 0;
+  const maxAttempts = 50;
 
-  for (let i = 0; i < shuffleSteps; i++) {
-    const moves = [];
-    for (let src = 0; src < state.length; src++) {
-      if (state[src].length === 0) continue;
-      
-      const top = state[src][state[src].length - 1];
-      let count = 0;
-      for (let j = state[src].length - 1; j >= 0; j--) {
-        if (state[src][j] === top) count++;
-        else break;
-      }
-      
-      const maxK = count === state[src].length ? count : count - 1;
-      
-      for (let dst = 0; dst < state.length; dst++) {
-        if (src === dst || state[dst].length >= 4) continue;
-        const space = 4 - state[dst].length;
-        for (let k = 1; k <= Math.min(maxK, space); k++) {
-          moves.push({ src, dst, k });
+  while (attempts < maxAttempts) {
+    attempts++;
+    const candidate: string[][] = selectedColors.map((c) => [c, c, c, c]);
+    for (let i = 0; i < numEmpty; i++) candidate.push([]);
+
+    for (let i = 0; i < shuffleSteps; i++) {
+      const moves = [];
+      for (let src = 0; src < candidate.length; src++) {
+        if (candidate[src].length === 0) continue;
+        
+        const top = candidate[src][candidate[src].length - 1];
+        let count = 0;
+        for (let j = candidate[src].length - 1; j >= 0; j--) {
+          if (candidate[src][j] === top) count++;
+          else break;
+        }
+        
+        const maxK = count === candidate[src].length ? count : count - 1;
+        
+        for (let dst = 0; dst < candidate.length; dst++) {
+          if (src === dst || candidate[dst].length >= 4) continue;
+          const space = 4 - candidate[dst].length;
+          for (let k = 1; k <= Math.min(maxK, space); k++) {
+            moves.push({ src, dst, k });
+          }
         }
       }
+      
+      if (moves.length === 0) break;
+      
+      const { src, dst, k } = moves[Math.floor(Math.random() * moves.length)];
+      for (let j = 0; j < k; j++) candidate[dst].push(candidate[src].pop()!);
     }
-    
-    if (moves.length === 0) break;
-    
-    const { src, dst, k } = moves[Math.floor(Math.random() * moves.length)];
-    for (let j = 0; j < k; j++) state[dst].push(state[src].pop()!);
+
+    const hasAlreadySolvedBottle = candidate.some((bottle) => isFullySameColor(bottle));
+    if (!hasAlreadySolvedBottle) {
+      state = candidate;
+      break;
+    }
   }
+
+  if (state.length === 0) {
+    state = selectedColors.map((c) => [c, c, c, c]);
+    for (let i = 0; i < numEmpty; i++) state.push([]);
+  }
+
   return state;
 }
 
 export default function WaterSort() {
-  const MAX_LEVELS = 3;
-  const [currentLevel, setCurrentLevel] = useState(1);
+  // 使用 state 管理關卡清單，支援動態新增與持久化
+  const [levels, setLevels] = useState<WaterSortLevelData[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedList = localStorage.getItem("watersort_all_levels");
+      if (savedList) {
+        try {
+          return JSON.parse(savedList);
+        } catch (e) {}
+      }
+    }
+    return INITIAL_LEVELS;
+  });
+
+  const MAX_LEVELS = levels.length;
   
+  // 關卡索引與資料狀態
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
+  const [currentLevelData, setCurrentLevelData] = useState<WaterSortLevelData>(levels[0]);
+  
+  // 模式狀態與編輯器畫筆
+  const [mode, setMode] = useState<'PLAY' | 'EDITOR'>('PLAY');
+  const [activeBrush, setActiveBrush] = useState<string>("R");
+  const [isViewJsonOpen, setIsViewJsonOpen] = useState(false);
+
   // 遊戲盤面與互動狀態
   const [gameState, setGameState] = useState<string[][]>([]);
   const [selectedBottle, setSelectedBottle] = useState<number | null>(null);
@@ -71,36 +119,160 @@ export default function WaterSort() {
   const [unlockAnimText, setUnlockAnimText] = useState<string | null>(null);
   const [isUnlockingAnim, setIsUnlockingAnim] = useState(false);
 
-  // 檢查單一瓶子是否已完賽 (4層滿且同色)
-  const isBottleCompleted = (bottle: string[]) => {
-    return bottle.length === 4 && new Set(bottle).size === 1;
-  };
+  // 初始化遊戲（確保若該關卡有 customLayout 則優先讀取固定佈局，杜絕每次隨機變動）
+  const initGame = useCallback((levelData: WaterSortLevelData) => {
+    setCurrentLevelData(levelData);
 
-  const initGame = useCallback((level: number) => {
-    const numColors = level + 2; 
-    const numEmpty = 2;
-    const shuffleSteps = 40 + (level * 20);
+    if (levelData.customLayout?.enabled && levelData.customLayout.state && levelData.customLayout.state.length > 0) {
+      setGameState(levelData.customLayout.state.map(bottle => [...bottle]));
+    } else {
+      const { numColors, numEmpty, shuffleSteps } = levelData.generation;
+      setGameState(generateLevel(numColors, numEmpty, shuffleSteps));
+    }
 
-    setGameState(generateLevel(numColors, numEmpty, shuffleSteps));
+    setUnlockCost(levelData.economy.unlockCost);
+    setLockedBottlesCount(levelData.economy.lockedBottlesCount);
+
     setSelectedBottle(null);
     setIsWon(false);
-    setLockedBottlesCount(1);
   }, []);
 
   useEffect(() => {
     setIsMounted(true);
-    initGame(1);
-  }, [initGame]);
+    initGame(levels[0]);
+  }, [initGame, levels]);
 
   const handleNextLevel = () => {
-    const next = currentLevel + 1;
-    setCurrentLevel(next);
-    initGame(next);
+    const nextIndex = currentLevelIndex + 1;
+    if (nextIndex < levels.length) {
+      setCurrentLevelIndex(nextIndex);
+      initGame(levels[nextIndex]);
+    }
   };
 
   const handleRestartAll = () => {
-    setCurrentLevel(1);
-    initGame(1);
+    setCurrentLevelIndex(0);
+    initGame(levels[0]);
+  };
+
+  // 核心功能：動態新增一關 (Add New Level)
+  const handleAddNewLevel = () => {
+    const newId = levels.length > 0 ? Math.max(...levels.map(l => Number(l.id) || 0)) + 1 : 1;
+    const newLevelName = `Custom Level #${newId}`;
+    
+    const defaultState = [
+      ["R", "G", "B", "R"],
+      ["G", "B", "R", "G"],
+      ["B", "R", "G", "B"],
+      [],
+      []
+    ];
+
+    const newLevelData: WaterSortLevelData = {
+      id: newId,
+      name: newLevelName,
+      generation: { numColors: 3, numEmpty: 2, shuffleSteps: 40 },
+      economy: { unlockCost: 10, lockedBottlesCount: 1 },
+      customLayout: {
+        enabled: true,
+        state: defaultState
+      }
+    };
+
+    const updatedLevels = [...levels, newLevelData];
+    setLevels(updatedLevels);
+    setCurrentLevelIndex(updatedLevels.length - 1);
+    initGame(newLevelData);
+    setMode("EDITOR");
+
+    localStorage.setItem("watersort_all_levels", JSON.stringify(updatedLevels));
+    alert(`// SUCCESS: 已成功建立新關卡 #${newId} (${newLevelName})！\n已自動切換至編輯模式，您可以開始自訂此關卡。`);
+  };
+
+  // 編輯器控制面板：新增/刪除/清空瓶子
+  const handleAddBottle = () => {
+    const newState = [...gameState, []];
+    setGameState(newState);
+    setCurrentLevelData(prev => ({
+      ...prev,
+      customLayout: {
+        enabled: true,
+        state: newState
+      }
+    }));
+  };
+
+  const handleRemoveBottle = () => {
+    if (gameState.length <= 2) return;
+    const newState = gameState.slice(0, gameState.length - 1);
+    setGameState(newState);
+    setCurrentLevelData(prev => ({
+      ...prev,
+      customLayout: {
+        enabled: true,
+        state: newState
+      }
+    }));
+  };
+
+  const handleClearAllBottles = () => {
+    const newState = gameState.map(() => []);
+    setGameState(newState);
+    setCurrentLevelData(prev => ({
+      ...prev,
+      customLayout: {
+        enabled: true,
+        state: newState
+      }
+    }));
+  };
+
+  // 關卡編輯儲存與驗證邏輯 (Save Level & Export JSON)
+  const handleSaveLevel = () => {
+    // 1. 檢查每個顏色的總數是否為 4 的倍數
+    const colorCounts: { [key: string]: number } = {};
+    gameState.forEach(bottle => {
+      bottle.forEach(color => {
+        colorCounts[color] = (colorCounts[color] || 0) + 1;
+      });
+    });
+
+    const invalidColors = Object.entries(colorCounts).filter(([color, count]) => count !== 4);
+    if (invalidColors.length > 0) {
+      const errorMsg = invalidColors.map(([c, count]) => `色塊 [${c}]: 目前有 ${count} 個 (必須剛好為 4 個)`).join('\n');
+      alert(`// VALIDATION_ERROR: 關卡配置不符合完整 4 層規範！\n\n${errorMsg}`);
+      return;
+    }
+
+    // 2. 驗證通過，更新當前關卡資料，設定 customLayout.enabled = true，確保確定性讀取
+    const updatedLevelData: WaterSortLevelData = {
+      ...currentLevelData,
+      customLayout: {
+        enabled: true,
+        state: gameState.map(b => [...b])
+      }
+    };
+
+    const updatedLevels = levels.map((lvl, idx) => idx === currentLevelIndex ? updatedLevelData : lvl);
+    setLevels(updatedLevels);
+    setCurrentLevelData(updatedLevelData);
+
+    try {
+      localStorage.setItem("watersort_all_levels", JSON.stringify(updatedLevels));
+      
+      // 同時提供一鍵下載 JSON 檔案功能，方便開發者將關卡固化進專案中
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(updatedLevelData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `level_${updatedLevelData.id}_spec.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      alert(`// SUCCESS: 關卡 #${currentLevelIndex + 1} (${updatedLevelData.name}) 已成功儲存、驗證並導出 JSON 檔案！\n切換關卡或重新整理後將完美固定為此佈局。`);
+    } catch (e) {
+      alert(`// SUCCESS: 關卡已成功驗證並儲存於瀏覽器記憶體！`);
+    }
   };
 
   // 觸發付費解鎖（並播放解鎖特效）
@@ -123,11 +295,42 @@ export default function WaterSort() {
     }
   };
 
+  // 編輯器專屬的圖層點擊處理器
+  const handleLayerClick = (e: React.MouseEvent, bottleIdx: number, layerIdx: number) => {
+    if (mode !== "EDITOR") return;
+    e.stopPropagation();
+
+    const newState = gameState.map((bottle) => [...bottle]);
+    const targetBottle = newState[bottleIdx];
+
+    if (activeBrush === "ERASE") {
+      if (targetBottle[layerIdx]) {
+        targetBottle.splice(layerIdx, 1);
+      }
+    } else {
+      if (layerIdx < targetBottle.length) {
+        targetBottle[layerIdx] = activeBrush;
+      } else if (layerIdx === targetBottle.length && targetBottle.length < 4) {
+        targetBottle.push(activeBrush);
+      }
+    }
+
+    setGameState(newState);
+    setCurrentLevelData((prev) => ({
+      ...prev,
+      customLayout: {
+        enabled: true,
+        state: newState,
+      },
+    }));
+  };
+
   const handleBottleClick = (idx: number) => {
+    if (mode === "EDITOR") return; // 編輯模式下不執行倒水操作
     if (isWon) return;
 
     // 已完成的瓶子禁止任何操作
-    if (isBottleCompleted(gameState[idx])) {
+    if (isFullySameColor(gameState[idx])) {
       setSelectedBottle(null);
       return;
     }
@@ -141,7 +344,7 @@ export default function WaterSort() {
         const src = [...gameState[selectedBottle]];
         const dst = [...gameState[idx]];
 
-        if (isBottleCompleted(dst)) {
+        if (isFullySameColor(dst)) {
           setSelectedBottle(null);
           return;
         }
@@ -163,7 +366,7 @@ export default function WaterSort() {
           newState[idx] = dst;
           setGameState(newState);
 
-          if (newState.every(b => b.length === 0 || isBottleCompleted(b))) {
+          if (newState.every(b => b.length === 0 || isFullySameColor(b))) {
             setIsWon(true);
           }
         }
@@ -181,49 +384,193 @@ export default function WaterSort() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-neutral-950 min-h-[500px] text-neutral-100 rounded-xl relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-neutral-950 min-h-[600px] text-neutral-100 rounded-xl relative overflow-hidden w-full max-w-5xl mx-auto">
       
-      {/* 上方資訊列 */}
-      <div className="absolute top-6 left-6 flex items-center gap-4 font-mono text-xs">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400">
-          LEVEL: <span className="text-cyan-400 font-bold">{currentLevel} / {MAX_LEVELS}</span>
-        </div>
+      {/* 頂部導航與控制面板：完美置中雙群組佈局 */}
+      <div className="w-full flex flex-wrap items-center justify-center gap-4 mb-8 pb-4 border-b border-neutral-800 font-mono text-xs">
         
-        <div className={`relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-800 border transition-all duration-300 ${
-          isUnlockingAnim 
-            ? 'border-emerald-400 bg-emerald-950/40 scale-110 shadow-[0_0_15px_rgba(52,211,153,0.4)]' 
-            : 'border-yellow-500/30 text-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.1)]'
-        }`}>
-          CREDITS: <span className="text-white font-bold">{credits}</span>
+        {/* 左側群組：LEVEL 選單、新增關卡按鈕與 CREDITS 點數 */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900 border border-neutral-700">
+            <span className="text-neutral-400">LEVEL:</span>
+            <select
+              value={currentLevelIndex}
+              onChange={(e) => {
+                const targetIdx = Number(e.target.value);
+                setCurrentLevelIndex(targetIdx);
+                initGame(levels[targetIdx]);
+              }}
+              className="bg-neutral-950 text-cyan-400 font-bold rounded px-1.5 py-0.5 border border-neutral-700 focus:outline-none focus:border-cyan-400 cursor-pointer max-h-60 overflow-y-auto"
+            >
+              {levels.map((level, idx) => (
+                <option key={level.id} value={idx}>
+                  #{idx + 1} // {level.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          {unlockAnimText && (
-            <span className="absolute -bottom-8 left-0 text-emerald-400 font-mono text-[10px] font-bold whitespace-nowrap animate-bounce">
-              {unlockAnimText}
-            </span>
+          <button
+            onClick={handleAddNewLevel}
+            className="px-3 py-1.5 rounded-full bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-400 border border-emerald-500/40 text-xs font-mono transition cursor-pointer font-bold"
+            title="新增一個全新的自訂關卡"
+          >
+            + NEW_LEVEL
+          </button>
+          
+          {mode === "PLAY" && (
+            <div className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900 border transition-all duration-300 ${
+              isUnlockingAnim 
+                ? 'border-emerald-400 bg-emerald-950/40 scale-105 shadow-[0_0_15px_rgba(52,211,153,0.4)]' 
+                : 'border-yellow-500/30 text-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.1)]'
+            }`}>
+              CREDITS: <span className="text-white font-bold">{credits}</span>
+
+              {unlockAnimText && (
+                <span className="absolute -bottom-6 left-0 text-emerald-400 font-mono text-[10px] font-bold whitespace-nowrap animate-bounce">
+                  {unlockAnimText}
+                </span>
+              )}
+            </div>
           )}
         </div>
+
+        {/* 右側群組：MODE、VIEW_JSON、VERSION、DEBUG 按鈕 */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          <button
+            onClick={() => {
+              setSelectedBottle(null);
+              setMode(mode === "PLAY" ? "EDITOR" : "PLAY");
+            }}
+            className={`px-3 py-1.5 rounded-full border text-xs font-mono transition-all duration-300 cursor-pointer ${
+              mode === "EDITOR"
+                ? "bg-purple-500 text-neutral-950 font-bold border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+                : "bg-neutral-900 text-purple-400 border-purple-500/30 hover:bg-purple-500/10"
+            }`}
+          >
+            {mode === "EDITOR" ? "🛠️ MODE: EDITOR" : "🕹️ MODE: PLAY"}
+          </button>
+
+          <button 
+            onClick={() => setIsViewJsonOpen(true)}
+            className="px-3 py-1.5 rounded-full bg-neutral-900 border border-cyan-500/30 text-cyan-400 text-xs font-mono hover:bg-cyan-500/10 transition-colors cursor-pointer"
+          >
+            [VIEW_JSON]
+          </button>
+
+          <span className="text-emerald-400 font-mono text-xs px-2.5 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/25 hidden sm:inline-block">
+            v2.5.0-DETERMINISTIC-EXPORT
+          </span>
+
+          <button 
+            onClick={() => setIsDebug(!isDebug)}
+            className="px-3 py-1.5 rounded-full bg-neutral-900 border border-neutral-700 text-neutral-400 text-xs font-mono hover:text-white transition-colors cursor-pointer"
+          >
+            DEBUG: {isDebug ? "ON" : "OFF"}
+          </button>
+        </div>
       </div>
 
-      <div className="absolute top-6 right-6 flex items-center gap-3">
-        <span className="text-emerald-400 font-mono text-xs px-2 py-1 bg-emerald-500/10 rounded-md border border-emerald-500/20">
-          v1.5.0-COMPACT
-        </span>
-        <button 
-          onClick={() => setIsDebug(!isDebug)}
-          className="px-3 py-1 rounded-full bg-neutral-800 border border-neutral-700 text-neutral-400 text-xs font-mono hover:text-white transition-colors"
-        >
-          DEBUG: {isDebug ? "ON" : "OFF"}
-        </button>
-      </div>
+      {/* JSON 規格預覽彈窗 */}
+      {isViewJsonOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-neutral-900 border border-cyan-500/50 rounded-xl p-6 max-w-lg w-full font-mono text-xs text-neutral-300 shadow-[0_0_30px_rgba(34,211,238,0.15)] relative">
+            <div className="flex justify-between items-center pb-3 mb-3 border-b border-neutral-800 text-cyan-400 font-bold">
+              <span>// CURRENT_LEVEL_SPECIFICATION</span>
+              <button onClick={() => setIsViewJsonOpen(false)} className="hover:text-white cursor-pointer">✕</button>
+            </div>
+            <pre className="bg-neutral-950 p-4 rounded-lg overflow-auto max-h-80 text-emerald-400 border border-neutral-800">
+              {JSON.stringify(currentLevelData, null, 2)}
+            </pre>
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => navigator.clipboard.writeText(JSON.stringify(currentLevelData, null, 2))}
+                className="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold rounded-md transition cursor-pointer"
+              >
+                COPY_JSON()
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {isWon && (
+      {/* 編輯器專屬調色盤工具列 */}
+      {mode === "EDITOR" && (
+        <div className="w-full max-w-4xl mb-8 p-3 bg-neutral-900/90 border border-purple-500/40 rounded-xl flex flex-wrap items-center justify-between gap-4 animate-fade-in shadow-[0_0_20px_rgba(168,85,247,0.15)] mx-auto">
+          
+          {/* 左側：調色盤畫筆選擇區 */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-purple-400 text-xs font-mono font-bold mr-1">// PALETTE:</span>
+            
+            {Object.keys(COLOR_MAP).map((colorKey) => (
+              <button
+                key={colorKey}
+                onClick={() => setActiveBrush(colorKey)}
+                className={`w-7 h-7 rounded-md transition-all duration-200 cursor-pointer ${
+                  COLOR_MAP[colorKey]
+                } ${
+                  activeBrush === colorKey
+                    ? "ring-2 ring-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                    : "opacity-70 hover:opacity-100"
+                }`}
+                title={`Brush: ${colorKey}`}
+              />
+            ))}
+
+            <button
+              onClick={() => setActiveBrush("ERASE")}
+              className={`px-2.5 h-7 rounded-md font-mono text-xs border transition-all duration-200 flex items-center justify-center cursor-pointer ${
+                activeBrush === "ERASE"
+                  ? "bg-red-500 text-white border-red-400 font-bold ring-2 ring-white"
+                  : "bg-neutral-800 text-neutral-400 border-neutral-700 hover:text-white"
+              }`}
+            >
+              [X] ERASE
+            </button>
+          </div>
+
+          {/* 右側：盤面控制台 */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleSaveLevel}
+              className="px-3 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-xs font-mono font-bold transition cursor-pointer shadow-[0_0_10px_rgba(168,85,247,0.4)]"
+              title="儲存並驗證目前編輯的關卡 (檢查所有顏色總數是否為 4 的倍數，並自動下載 JSON 檔)"
+            >
+              💾 SAVE & EXPORT JSON
+            </button>
+            <button
+              onClick={handleAddBottle}
+              className="px-2.5 py-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-600 rounded text-xs font-mono transition cursor-pointer"
+              title="在盤面最後增加一個空瓶"
+            >
+              + BOTTLE
+            </button>
+            <button
+              onClick={handleRemoveBottle}
+              className="px-2.5 py-1 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-600 rounded text-xs font-mono transition cursor-pointer"
+              title="移除最後一個瓶子"
+            >
+              - BOTTLE
+            </button>
+            <button
+              onClick={handleClearAllBottles}
+              className="px-2.5 py-1 bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-500/30 rounded text-xs font-mono transition cursor-pointer"
+              title="清空所有瓶子內的水"
+            >
+              CLEAR()
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isWon && mode === "PLAY" && (
         <div className="mb-8 text-center animate-bounce">
-          {currentLevel < MAX_LEVELS ? (
+          {currentLevelIndex < MAX_LEVELS - 1 ? (
             <>
-              <h2 className="text-4xl font-bold text-cyan-400 mb-4">LEVEL {currentLevel} CLEARED!</h2>
+              <h2 className="text-4xl font-bold text-cyan-400 mb-4">LEVEL {currentLevelIndex + 1} CLEARED!</h2>
               <button
                 onClick={handleNextLevel}
-                className="px-6 py-2 bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold rounded-lg transition"
+                className="px-6 py-2 bg-cyan-500 hover:bg-cyan-400 text-neutral-950 font-bold rounded-lg transition cursor-pointer"
               >
                 NEXT_LEVEL()
               </button>
@@ -231,10 +578,10 @@ export default function WaterSort() {
           ) : (
             <>
               <h2 className="text-4xl font-bold text-purple-400 mb-4">SYSTEM CONQUERED!</h2>
-              <p className="text-neutral-400 mb-6 font-mono">恭喜完成所有演算法測試。</p>
+              <p className="text-neutral-400 mb-6 font-mono">恭喜完成所有關卡測試。</p>
               <button
                 onClick={handleRestartAll}
-                className="px-6 py-2 bg-purple-500 hover:bg-purple-400 text-neutral-950 font-bold rounded-lg transition"
+                className="px-6 py-2 bg-purple-500 hover:bg-purple-400 text-neutral-950 font-bold rounded-lg transition cursor-pointer"
               >
                 REBOOT_SYSTEM()
               </button>
@@ -243,30 +590,34 @@ export default function WaterSort() {
         </div>
       )}
 
-      {/* 遊戲盤面：將瓶子之間的間距從 gap-6 微調為 gap-4，讓瘦長瓶子視覺更集密 */}
-      <div className="flex flex-wrap justify-center items-end gap-4 mt-12">
+      {/* 遊戲盤面區塊 */}
+      <div className="flex flex-wrap justify-center items-end gap-4 my-6">
         {gameState.map((bottle, idx) => {
-          const completed = isBottleCompleted(bottle);
+          const completed = isFullySameColor(bottle);
           const isSelected = selectedBottle === idx;
 
           return (
             <div key={idx} className="flex flex-col items-center">
               
-              {/* 微調後的上蓋與標誌空間：配合 48px 瓶子寬度修改為 w-9 */}
-              {completed ? (
+              {completed && mode === "PLAY" ? (
                 <div className="flex flex-col items-center mb-1 animate-fade-in">
                   <span className="text-[8px] font-mono font-bold text-cyan-400 tracking-tighter">✓ FULL</span>
                   <div className="w-9 h-2 bg-cyan-400 rounded-t-sm shadow-[0_0_8px_rgba(34,211,238,0.8)] border-b border-neutral-950" />
                 </div>
               ) : (
-                <div className="h-5" />
+                <div className="h-5 flex items-center justify-center">
+                  {mode === "EDITOR" && (
+                    <span className="text-[9px] font-mono text-purple-400/70">#{idx + 1}</span>
+                  )}
+                </div>
               )}
 
-              {/* 水管主體：寬度調整為 w-12 (48px)，高度調整為 h-36 (144px) */}
               <div
                 onClick={() => handleBottleClick(idx)}
                 className={`w-12 h-36 border-2 rounded-b-xl flex flex-col p-1 gap-1 transition-all duration-300 ${
-                  completed
+                  mode === "EDITOR"
+                    ? "border-purple-500/40 bg-neutral-900/60 shadow-[0_0_10px_rgba(168,85,247,0.1)]"
+                    : completed
                     ? "border-cyan-400 bg-neutral-900/80 shadow-[0_0_15px_rgba(34,211,238,0.3)] cursor-not-allowed opacity-90"
                     : isSelected
                     ? "-translate-y-4 ring-2 ring-cyan-400 bg-neutral-900 border-neutral-600 shadow-[0_0_15px_rgba(34,211,238,0.2)] cursor-pointer"
@@ -276,8 +627,15 @@ export default function WaterSort() {
                 {[3, 2, 1, 0].map((layerIdx) => (
                   <div 
                     key={layerIdx} 
-                    className={`w-full flex-1 rounded-sm transition-colors duration-300 ${
+                    onClick={(e) => handleLayerClick(e, idx, layerIdx)}
+                    className={`w-full flex-1 rounded-sm transition-all duration-200 ${
                       bottle[layerIdx] ? COLOR_MAP[bottle[layerIdx]] : 'bg-neutral-900/50'
+                    } ${
+                      mode === "EDITOR" && layerIdx === bottle.length && bottle.length < 4
+                        ? "border border-dashed border-purple-500/45 hover:bg-purple-500/20"
+                        : ""
+                    } ${
+                      mode === "EDITOR" ? "hover:brightness-125 cursor-cell" : ""
                     }`} 
                   />
                 ))}
@@ -286,8 +644,8 @@ export default function WaterSort() {
           );
         })}
 
-        {/* 🔒 付費鎖住的瓶子 UI：等比例縮小尺寸與字體 */}
-        {Array.from({ length: lockedBottlesCount }).map((_, idx) => (
+        {/* 🔒 付費鎖住的瓶子 UI (僅在 PLAY 模式顯示) */}
+        {mode === "PLAY" && Array.from({ length: lockedBottlesCount }).map((_, idx) => (
           <div key={`locked-${idx}`} className="flex flex-col items-center">
             <div className="h-5" />
             <div
@@ -314,13 +672,15 @@ export default function WaterSort() {
       </div>
 
       {isDebug && (
-        <div className="w-full max-w-3xl mt-12 p-4 bg-neutral-900 border border-red-500/50 rounded-lg text-xs font-mono text-green-400 overflow-auto max-h-64 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-          <p className="text-red-400 mb-2 border-b border-red-500/30 pb-1">// SYSTEM_DEBUGGER_ACTIVE - VERSION 1.5.0 (COMPACT)</p>
+        <div className="w-full max-w-3xl mt-8 p-4 bg-neutral-900 border border-red-500/50 rounded-lg text-xs font-mono text-green-400 overflow-auto max-h-64 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+          <p className="text-red-400 mb-2 border-b border-red-500/30 pb-1">// SYSTEM_DEBUGGER_ACTIVE - VERSION 2.5.0 (DETERMINISTIC-EXPORT)</p>
           <div className="flex gap-8 mb-4">
-            <p>Selected Bottle: <span className="text-white font-bold">{selectedBottle !== null ? selectedBottle : "null"}</span></p>
-            <p>Is Won: <span className="text-white font-bold">{isWon.toString()}</span></p>
-            <p>Credits: <span className="text-yellow-400 font-bold">{credits}</span></p>
+            <p>Current Mode: <span className="text-purple-400 font-bold">{mode}</span></p>
+            <p>Active Brush: <span className="text-white font-bold">{activeBrush}</span></p>
+            <p>Current Level: <span className="text-cyan-400 font-bold">{currentLevelData.name}</span></p>
           </div>
+          <p className="mb-1">Current Level Data Spec:</p>
+          <pre className="text-green-300 mb-4">{JSON.stringify(currentLevelData, null, 2)}</pre>
           <p className="mb-1">Current State Array (gameState):</p>
           <pre className="text-green-300">{JSON.stringify(gameState, null, 2)}</pre>
         </div>
