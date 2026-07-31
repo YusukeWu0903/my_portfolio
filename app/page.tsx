@@ -38,11 +38,15 @@ export default function Home() {
           {/* Project Card 1: AI 視覺小說引擎 */}
           <div className="group relative rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] flex flex-col justify-between">
             <div>
-              <div className="h-48 bg-neutral-950 flex items-center justify-center border-b border-neutral-800 relative overflow-hidden group-hover:bg-neutral-900/50 transition-colors">
-                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/20 to-purple-900/20 z-10"></div>
-                <span className="text-neutral-500 font-mono text-sm z-20 group-hover:text-cyan-400 transition-colors">
-                  [ INTERACTIVE PREVIEW AVAILABLE ]
-                </span>
+              <div className="h-48 bg-neutral-950 border-b border-neutral-800 relative overflow-hidden">
+                {/* 微暗遮罩：讓滑鼠游標停懸時稍微變亮，增加互動感 */}
+                <div className="absolute inset-0 bg-neutral-950/40 group-hover:bg-transparent transition-all duration-300 z-10"></div>
+                
+                <img 
+                  src="/visual-novel.png" 
+                  alt="AI 視覺小說引擎介面" 
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
               
               <div className="p-6">
@@ -78,11 +82,15 @@ export default function Home() {
           {/* Project Card 2: AI 影音素材庫與自動化爬蟲 */}
           <div className="group relative rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] flex flex-col justify-between">
             <div>
-              <div className="h-48 bg-neutral-950 flex items-center justify-center border-b border-neutral-800 relative overflow-hidden group-hover:bg-neutral-900/50 transition-colors">
-                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/20 to-blue-900/20 z-10"></div>
-                <span className="text-neutral-500 font-mono text-sm z-20 group-hover:text-cyan-400 transition-colors">
-                  [ STREAMLIT FUI ENGINE ]
-                </span>
+              <div className="h-48 bg-neutral-950 border-b border-neutral-800 relative overflow-hidden">
+                {/* 微暗遮罩：讓滑鼠游標停懸時稍微變亮，增加互動感 */}
+                <div className="absolute inset-0 bg-neutral-950/40 group-hover:bg-transparent transition-all duration-300 z-10"></div>
+                
+                <img 
+                  src="/material-downloader.png" 
+                  alt="AI 影音素材庫專案介面" 
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
               
               <div className="p-6">
