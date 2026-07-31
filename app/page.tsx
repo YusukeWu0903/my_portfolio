@@ -124,22 +124,55 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Project Card 3: AI 製作倒水遊戲 */}
+          <div className="group relative rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] flex flex-col justify-between">
+            <div>
+              <div className="h-48 bg-neutral-950 border-b border-neutral-800 relative overflow-hidden">
+                {/* 微暗遮罩：讓滑鼠游標停懸時稍微變亮，增加互動感 */}
+                <div className="absolute inset-0 bg-neutral-950/40 group-hover:bg-transparent transition-all duration-300 z-10"></div>
+                
+                <img 
+                  src="/water-sort.png" 
+                  alt="AI 製作倒水遊戲介面" 
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-bold group-hover:text-cyan-400 transition-colors">AI 製作倒水遊戲</h3>
+                  <span className="text-xs font-mono px-2 py-1 bg-neutral-800 rounded text-neutral-400 border border-neutral-700">v1.0.0</span>
+                </div>
+                <p className="text-neutral-400 text-sm mb-6 line-clamp-3">
+                  用GOOGLE GEMINI搭配HERMES AGENT，花一天製作市面上流行的倒水遊戲。
+                </p>
+                <div className="flex gap-2 flex-wrap mb-6">
+                  <span className="text-xs px-2 py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Next.js</span>
+                  <span className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Tailwind</span>
+                  <span className="text-xs px-2 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">React</span>
+                  <span className="text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Typescript</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-neutral-800/50 mt-4 pt-4">
+              <a 
+                href="https://water-sort-local.vercel.app//" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all"
+              >
+                <span>立即遊玩 (Live Demo)</span>
+                <span>↗</span>
+              </a>
+              <span className="text-xs font-mono text-neutral-500">Vercel Deployed</span>
+            </div>
+          </div>
+
         </div>
         {/* 雙欄網格容器結束 */}
       </section>
 
-      {/* Interactive Module Section: Water Sort */}
-      <section className="py-10 border-t border-neutral-800/50 mt-10">
-        <h2 className="text-2xl font-mono font-bold mb-10 flex items-center gap-3">
-          <span className="text-cyan-500">{">"}</span> SYSTEM.TEST_MODULE( &apos;Water_Sort&apos; )
-        </h2>
-        <div className="bg-neutral-900 rounded-xl border border-neutral-800 p-8 shadow-[0_0_30px_rgba(34,211,238,0.05)]">
-          <p className="text-neutral-400 text-sm mb-8 text-center font-mono">
-            [ 初始化演算法驗證模組：請點擊瓶子將相同顏色的液體分類 ]
-          </p>
-          <WaterSort />
-        </div>
-      </section>
     </main>
   );
 }
