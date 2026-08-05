@@ -184,7 +184,42 @@ export default function Home() {
               </div>
               <div className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-neutral-800/50 mt-4 pt-4">
                 <a 
-                  href="https://water-sort-local.vercel.app//" 
+                  href="https://water-sort-local.vercel.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all"
+                >
+                  <span>立即遊玩 (Live Demo)</span>
+                  <span>↗</span>
+                </a>
+                <span className="text-xs font-mono text-neutral-500">Vercel Deployed</span>
+              </div>
+            </div>
+
+            {/* New Project: Hex Grid Tactical Game */}
+            <div className="group relative rounded-xl border border-neutral-800 bg-neutral-900 overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)] flex flex-col justify-between">
+              <div>
+                <div className="h-48 bg-neutral-950 border-b border-neutral-800 relative overflow-hidden flex items-center justify-center">
+                  <div className="text-neutral-500 text-sm font-mono">TACTICAL MAP PREVIEW</div>
+                </div>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-bold group-hover:text-cyan-400 transition-colors">Hex Grid 戰棋遊戲</h3>
+                    <span className="text-xs font-mono px-2 py-1 bg-neutral-800 rounded text-neutral-400 border border-neutral-700">v1.0.0</span>
+                  </div>
+                  <p className="text-neutral-400 text-sm mb-6 line-clamp-3">
+                    基於六角網格（Hex Grid）的策略戰棋網頁遊戲，具備精密的戰術移動與回合制對戰機制。
+                  </p>
+                  <div className="flex gap-2 flex-wrap mb-6">
+                    <span className="text-xs px-2 py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">Next.js</span>
+                    <span className="text-xs px-2 py-1 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Tailwind</span>
+                    <span className="text-xs px-2 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Tactical Strategy</span>
+                  </div>
+                </div>
+              </div>
+              <div className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-neutral-800/50 mt-4 pt-4">
+                <a 
+                  href="https://game-hex-grid-4bj7.vercel.app/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all"
