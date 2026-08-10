@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const [layoutMode, setLayoutMode] = useState<'cyberpunk' | 'editorial' | 'retro'>('cyberpunk');
+  const [layoutMode, setLayoutMode] = useState<'retro' | 'cyberpunk' | 'editorial'>('retro');
   const [activeTab, setActiveTab] = useState<'all' | 'games' | 'tools'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -97,29 +97,29 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-colors duration-700 relative overflow-hidden font-sans ${
-      layoutMode === 'cyberpunk' 
+      layoutMode === 'retro'
+        ? 'bg-[#FFFDF5] text-black selection:bg-[#FFE500] selection:text-black'
+        : layoutMode === 'cyberpunk' 
         ? 'bg-zinc-950 text-zinc-100 selection:bg-cyan-500/30 selection:text-cyan-200' 
-        : layoutMode === 'editorial'
-        ? 'bg-[#12100E] text-[#F5F0EB] selection:bg-amber-500/30 selection:text-amber-200'
-        : 'bg-[#FFFDF5] text-black selection:bg-[#FFE500] selection:text-black'
+        : 'bg-[#12100E] text-[#F5F0EB] selection:bg-amber-500/30 selection:text-amber-200'
     }`}>
       
       {/* Background Ambiance */}
-      {layoutMode === 'cyberpunk' ? (
+      {layoutMode === 'retro' ? (
+        /* Neo-Brutalism Dot Grid Background */
+        <div className="absolute inset-0 bg-[radial-gradient(#00000015_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+      ) : layoutMode === 'cyberpunk' ? (
         <>
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
         </>
-      ) : layoutMode === 'editorial' ? (
+      ) : (
         <>
           <div className="absolute top-0 left-1/3 w-[700px] h-[700px] bg-amber-600/10 rounded-full blur-[160px] pointer-events-none" />
           <div className="absolute bottom-1/4 right-10 w-[600px] h-[600px] bg-rose-600/10 rounded-full blur-[180px] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:5rem_5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
         </>
-      ) : (
-        /* Neo-Brutalism Dot Grid Background */
-        <div className="absolute inset-0 bg-[radial-gradient(#00000015_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
       )}
 
       {/* Main Container */}
@@ -131,29 +131,29 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className={`flex flex-wrap items-center justify-between gap-4 mb-10 p-4 rounded-2xl backdrop-blur-xl transition-colors duration-500 ${
-            layoutMode === 'cyberpunk' 
+            layoutMode === 'retro'
+              ? 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
+              : layoutMode === 'cyberpunk' 
               ? 'bg-white/[0.02] border border-white/15 text-cyan-400' 
-              : layoutMode === 'editorial'
-              ? 'bg-white/[0.03] border border-amber-500/20 text-amber-400'
-              : 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
+              : 'bg-white/[0.03] border border-amber-500/20 text-amber-400'
           }`}
         >
           <div className="flex items-center gap-3">
             <div className={`flex items-center justify-center w-10 h-10 rounded-xl border ${
-              layoutMode === 'cyberpunk' 
+              layoutMode === 'retro'
+                ? 'bg-[#FFE500] border-4 border-black font-black text-black'
+                : layoutMode === 'cyberpunk' 
                 ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' 
-                : layoutMode === 'editorial'
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                : 'bg-[#FFE500] border-4 border-black font-black text-black'
+                : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
             }`}>
-              {layoutMode === 'cyberpunk' ? <Activity className="w-5 h-5 animate-pulse" /> : layoutMode === 'editorial' ? <BookOpen className="w-5 h-5" /> : '👾'}
+              {layoutMode === 'retro' ? '👾' : layoutMode === 'cyberpunk' ? <Activity className="w-5 h-5 animate-pulse" /> : <BookOpen className="w-5 h-5" />}
             </div>
             <div>
               <div className="text-xs font-mono tracking-wider font-bold">
-                {layoutMode === 'cyberpunk' ? 'SYSTEM_READY // LAUNCHER_v2.5' : layoutMode === 'editorial' ? 'EDITORIAL_EDITION // VOL. 04' : 'PLAYER_MODE // RETRO_v1.0'}
+                {layoutMode === 'retro' ? 'PLAYER_MODE // RETRO_v1.0' : layoutMode === 'cyberpunk' ? 'SYSTEM_READY // LAUNCHER_v2.5' : 'EDITORIAL_EDITION // VOL. 04'}
               </div>
-              <div className={`text-sm font-bold ${layoutMode === 'cyberpunk' ? 'text-zinc-200' : layoutMode === 'editorial' ? 'text-[#F5F0EB]' : 'text-black font-black'}`}>
-                {layoutMode === 'cyberpunk' ? 'AI ENGINEERING & GAME CORE' : layoutMode === 'editorial' ? 'FASHION & WARM ARCHITECTURE' : 'NEO-BRUTALISM RETRO ARCADE'}
+              <div className={`text-sm font-bold ${layoutMode === 'retro' ? 'text-black font-black' : layoutMode === 'cyberpunk' ? 'text-zinc-200' : 'text-[#F5F0EB]'}`}>
+                {layoutMode === 'retro' ? 'NEO-BRUTALISM RETRO ARCADE' : layoutMode === 'cyberpunk' ? 'AI ENGINEERING & GAME CORE' : 'FASHION & WARM ARCHITECTURE'}
               </div>
             </div>
           </div>
@@ -163,15 +163,15 @@ export default function Home() {
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-mono border transition-all duration-300 font-bold ${
-                layoutMode === 'cyberpunk'
+                layoutMode === 'retro'
+                  ? 'bg-[#00FF66] border-4 border-black shadow-[2px_2px_0px_#000] text-black hover:translate-x-0.5 hover:translate-y-0.5'
+                  : layoutMode === 'cyberpunk'
                   ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20'
-                  : layoutMode === 'editorial'
-                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
-                  : 'bg-[#00FF66] border-4 border-black shadow-[2px_2px_0px_#000] text-black hover:translate-x-0.5 hover:translate-y-0.5'
+                  : 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
-              <span>版型: {layoutMode === 'cyberpunk' ? 'Cyberpunk Launcher' : layoutMode === 'editorial' ? 'Fashion Editorial' : 'Retro Arcade'}</span>
+              <span>版型: {layoutMode === 'retro' ? 'Retro Arcade' : layoutMode === 'cyberpunk' ? 'Cyberpunk Launcher' : 'Fashion Editorial'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -183,14 +183,23 @@ export default function Home() {
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   className={`absolute right-0 mt-2 w-64 rounded-2xl border shadow-2xl overflow-hidden z-50 backdrop-blur-2xl ${
-                    layoutMode === 'cyberpunk'
+                    layoutMode === 'retro'
+                      ? 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
+                      : layoutMode === 'cyberpunk'
                       ? 'bg-zinc-900/95 border-zinc-800 text-zinc-200'
-                      : layoutMode === 'editorial'
-                      ? 'bg-[#1C1815]/95 border-amber-900/40 text-[#F5F0EB]'
-                      : 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
+                      : 'bg-[#1C1815]/95 border-amber-900/40 text-[#F5F0EB]'
                   }`}
                 >
                   <div className="p-2 space-y-1">
+                    <button
+                      onClick={() => { setLayoutMode('retro'); setDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors font-bold ${
+                        layoutMode === 'retro' ? 'bg-[#FFE500] text-black font-black' : 'hover:bg-black/5 text-black'
+                      }`}
+                    >
+                      <span>👾 Retro Arcade (Neo-Brutalism)</span>
+                      {layoutMode === 'retro' && <span className="w-2 h-2 rounded-full bg-black" />}
+                    </button>
                     <button
                       onClick={() => { setLayoutMode('cyberpunk'); setDropdownOpen(false); }}
                       className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors ${
@@ -209,15 +218,6 @@ export default function Home() {
                       <span>✨ Fashion Editorial (Warm)</span>
                       {layoutMode === 'editorial' && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
                     </button>
-                    <button
-                      onClick={() => { setLayoutMode('retro'); setDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors font-bold ${
-                        layoutMode === 'retro' ? 'bg-[#FFE500] text-black font-black' : 'hover:bg-black/5 text-black'
-                      }`}
-                    >
-                      <span>👾 Retro Arcade (Neo-Brutalism)</span>
-                      {layoutMode === 'retro' && <span className="w-2 h-2 rounded-full bg-black" />}
-                    </button>
                   </div>
                 </motion.div>
               )}
@@ -227,242 +227,7 @@ export default function Home() {
 
         {/* Layout Switcher Renderer */}
         <AnimatePresence mode="wait">
-          {layoutMode === 'cyberpunk' ? (
-            /* ==================== CYBERPUNK LAUNCHER LAYOUT ==================== */
-            <motion.div
-              key="cyberpunk"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Hero Section */}
-              <section className="flex flex-col items-start justify-center pt-4 pb-16 max-w-4xl">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono mb-6 shadow-[0_0_20px_rgba(0,240,255,0.15)]">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>AWWWARDS LEVEL INTERACTIVE SHOWCASE</span>
-                </div>
-
-                <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-6 leading-[1.1]">
-                  Engineering <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_35px_rgba(0,240,255,0.3)]">
-                    Immersive Realities.
-                  </span>
-                </h1>
-
-                <p className="text-zinc-400 text-lg sm:text-xl max-w-2xl leading-relaxed mb-10 font-normal">
-                  融合高階 AI 自動化管道與次世代網頁遊戲架構。探索極致流暢的互動體驗與精準的工程美學。
-                </p>
-
-                {/* Filter Tabs */}
-                <div className="flex flex-wrap gap-3 p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
-                  <button
-                    onClick={() => setActiveTab('all')}
-                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
-                      activeTab === 'all' 
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
-                    }`}
-                  >
-                    <Zap className="w-4 h-4" />
-                    <span>全部專案 (All)</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('games')}
-                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
-                      activeTab === 'games' 
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
-                    }`}
-                  >
-                    <Gamepad2 className="w-4 h-4" />
-                    <span>互動遊戲 (Games)</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('tools')}
-                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
-                      activeTab === 'tools' 
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
-                    }`}
-                  >
-                    <Wrench className="w-4 h-4" />
-                    <span>高階工具 (Tools)</span>
-                  </button>
-                </div>
-              </section>
-
-              {/* Bento Grid */}
-              <section className="py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[340px]">
-                  {filteredProjects.map((project, index) => (
-                    <motion.div
-                      key={project.title}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                      whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                      className={`group relative rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden flex flex-col justify-between p-8 transition-all duration-500 ${project.span} group-hover:border-cyan-400/50 hover:shadow-[0_0_40px_rgba(0,240,255,0.2)]`}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-blue-500/10 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
-
-                      <div className="relative z-10 flex justify-between items-start mb-6">
-                        <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 backdrop-blur-md">
-                          {project.badge}
-                        </span>
-                        <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-cyan-400 group-hover:border-cyan-500/45 transition-all duration-300">
-                          {project.category === 'games' ? <Gamepad2 className="w-5 h-5" /> : <Wrench className="w-5 h-5" />}
-                        </div>
-                      </div>
-
-                      <div className="relative z-10 my-auto">
-                        <h3 className="text-2xl font-bold mb-3 tracking-tight group-hover:text-cyan-300 transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        <p className="text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
-                          {project.description}
-                        </p>
-                        <div className="flex gap-2 flex-wrap">
-                          {project.tags.map(tag => (
-                            <span key={tag} className="text-xs font-mono px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-zinc-300">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] group/btn"
-                        >
-                          <span>LAUNCH DEMO</span>
-                          <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                        </a>
-                        <span className="text-xs font-mono text-zinc-500">VERCEL CLOUD</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            </motion.div>
-          ) : layoutMode === 'editorial' ? (
-            /* ==================== EDITORIAL FASHION WARM LAYOUT ==================== */
-            <motion.div
-              key="editorial"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Editorial Hero Section */}
-              <section className="flex flex-col items-start justify-center pt-6 pb-20 max-w-4xl">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono mb-6">
-                  <span>CURATED COLLECTION // 2026 EDITORIAL</span>
-                </div>
-
-                <h1 className="text-5xl sm:text-7xl font-serif font-light tracking-tight mb-6 leading-[1.15] text-[#F5F0EB]">
-                  Timeless Code, <br />
-                  <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-orange-400">
-                    Warm Aesthetics.
-                  </span>
-                </h1>
-
-                <p className="text-[#A39B93] text-lg sm:text-xl max-w-2xl leading-relaxed mb-10 font-light">
-                  以大地暖色調與優雅雜誌排版（Editorial Magazine）重新定義數位作品集。將頂尖 AI 邏輯與溫潤質感完美交織。
-                </p>
-
-                {/* Editorial Filter Tabs */}
-                <div className="flex flex-wrap gap-4 border-b border-white/10 pb-4 w-full">
-                  <button
-                    onClick={() => setActiveTab('all')}
-                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
-                      activeTab === 'all' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
-                    }`}
-                  >
-                    [01] ALL WORKS
-                    {activeTab === 'all' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('games')}
-                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
-                      activeTab === 'games' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
-                    }`}
-                  >
-                    [02] INTERACTIVE GAMES
-                    {activeTab === 'games' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('tools')}
-                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
-                      activeTab === 'tools' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
-                    }`}
-                  >
-                    [03] CRAFTED TOOLS
-                    {activeTab === 'tools' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
-                  </button>
-                </div>
-              </section>
-
-              {/* Editorial Magazine Grid */}
-              <section className="py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  {filteredProjects.map((project, index) => (
-                    <motion.div
-                      key={project.title}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: index * 0.1 }}
-                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                      className="group relative rounded-3xl border border-amber-500/15 bg-[#1C1815]/60 backdrop-blur-md p-10 flex flex-col justify-between transition-all duration-500 hover:border-amber-400/40 hover:shadow-[0_10px_40px_rgba(245,158,11,0.08)]"
-                    >
-                      <div>
-                        <div className="flex justify-between items-center mb-8">
-                          <span className="text-xs font-mono tracking-widest text-amber-400/80 uppercase">
-                            // 0{index + 1} — {project.badge}
-                          </span>
-                          <span className="text-xs font-mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                            {project.category.toUpperCase()}
-                          </span>
-                        </div>
-
-                        <h3 className="text-3xl font-serif font-light mb-4 group-hover:text-amber-200 transition-colors text-[#F5F0EB]">
-                          {project.title}
-                        </h3>
-
-                        <p className="text-[#A39B93] text-base leading-relaxed mb-8 font-light">
-                          {project.description}
-                        </p>
-
-                        <div className="flex gap-2 flex-wrap mb-10">
-                          {project.tags.map(tag => (
-                            <span key={tag} className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#D4CFC7]">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="pt-6 border-t border-white/10 flex items-center justify-between">
-                        <a
-                          href={project.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-sm font-mono tracking-wider text-amber-300 hover:text-amber-200 transition-colors group/link"
-                        >
-                          <span className="border-b border-amber-400/40 pb-0.5 group-hover/link:border-amber-300">EXPLORE LIVE EXPERIENCE</span>
-                          <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
-                        </a>
-                        <span className="text-xs font-mono text-[#78716C]">EDITION 2026</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            </motion.div>
-          ) : (
+          {layoutMode === 'retro' ? (
             /* ==================== RETRO NEO-BRUTALISM ARCADE LAYOUT ==================== */
             <motion.div
               key="retro"
@@ -652,6 +417,241 @@ export default function Home() {
                   © 2026 RETRO ARCADE PORTFOLIO. ALL RIGHTS RESERVED.
                 </div>
               </footer>
+            </motion.div>
+          ) : layoutMode === 'cyberpunk' ? (
+            /* ==================== CYBERPUNK LAUNCHER LAYOUT ==================== */
+            <motion.div
+              key="cyberpunk"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Hero Section */}
+              <section className="flex flex-col items-start justify-center pt-4 pb-16 max-w-4xl">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-mono mb-6 shadow-[0_0_20px_rgba(0,240,255,0.15)]">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>AWWWARDS LEVEL INTERACTIVE SHOWCASE</span>
+                </div>
+
+                <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-6 leading-[1.1]">
+                  Engineering <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 drop-shadow-[0_0_35px_rgba(0,240,255,0.3)]">
+                    Immersive Realities.
+                  </span>
+                </h1>
+
+                <p className="text-zinc-400 text-lg sm:text-xl max-w-2xl leading-relaxed mb-10 font-normal">
+                  融合高階 AI 自動化管道與次世代網頁遊戲架構。探索極致流暢的互動體驗與精準的工程美學。
+                </p>
+
+                {/* Filter Tabs */}
+                <div className="flex flex-wrap gap-3 p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                  <button
+                    onClick={() => setActiveTab('all')}
+                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                      activeTab === 'all' 
+                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                    }`}
+                  >
+                    <Zap className="w-4 h-4" />
+                    <span>全部專案 (All)</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('games')}
+                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                      activeTab === 'games' 
+                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                    }`}
+                  >
+                    <Gamepad2 className="w-4 h-4" />
+                    <span>互動遊戲 (Games)</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('tools')}
+                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                      activeTab === 'tools' 
+                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                    }`}
+                  >
+                    <Wrench className="w-4 h-4" />
+                    <span>高階工具 (Tools)</span>
+                  </button>
+                </div>
+              </section>
+
+              {/* Bento Grid */}
+              <section className="py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[340px]">
+                  {filteredProjects.map((project, index) => (
+                    <motion.div
+                      key={project.title}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                      className={`group relative rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden flex flex-col justify-between p-8 transition-all duration-500 ${project.span} group-hover:border-cyan-400/50 hover:shadow-[0_0_40px_rgba(0,240,255,0.2)]`}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-blue-500/10 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
+
+                      <div className="relative z-10 flex justify-between items-start mb-6">
+                        <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 backdrop-blur-md">
+                          {project.badge}
+                        </span>
+                        <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-cyan-400 group-hover:border-cyan-500/45 transition-all duration-300">
+                          {project.category === 'games' ? <Gamepad2 className="w-5 h-5" /> : <Wrench className="w-5 h-5" />}
+                        </div>
+                      </div>
+
+                      <div className="relative z-10 my-auto">
+                        <h3 className="text-2xl font-bold mb-3 tracking-tight group-hover:text-cyan-300 transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                        <p className="text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
+                          {project.description}
+                        </p>
+                        <div className="flex gap-2 flex-wrap">
+                          {project.tags.map(tag => (
+                            <span key={tag} className="text-xs font-mono px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-zinc-300">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] group/btn"
+                        >
+                          <span>LAUNCH DEMO</span>
+                          <ArrowUpRight className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        </a>
+                        <span className="text-xs font-mono text-zinc-500">VERCEL CLOUD</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+            </motion.div>
+          ) : (
+            /* ==================== EDITORIAL FASHION WARM LAYOUT ==================== */
+            <motion.div
+              key="editorial"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Editorial Hero Section */}
+              <section className="flex flex-col items-start justify-center pt-6 pb-20 max-w-4xl">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono mb-6">
+                  <span>CURATED COLLECTION // 2026 EDITORIAL</span>
+                </div>
+
+                <h1 className="text-5xl sm:text-7xl font-serif font-light tracking-tight mb-6 leading-[1.15] text-[#F5F0EB]">
+                  Timeless Code, <br />
+                  <span className="italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-orange-400">
+                    Warm Aesthetics.
+                  </span>
+                </h1>
+
+                <p className="text-[#A39B93] text-lg sm:text-xl max-w-2xl leading-relaxed mb-10 font-light">
+                  以大地暖色調與優雅雜誌排版（Editorial Magazine）重新定義數位作品集。將頂尖 AI 邏輯與溫潤質感完美交織。
+                </p>
+
+                {/* Editorial Filter Tabs */}
+                <div className="flex flex-wrap gap-4 border-b border-white/10 pb-4 w-full">
+                  <button
+                    onClick={() => setActiveTab('all')}
+                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                      activeTab === 'all' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                    }`}
+                  >
+                    [01] ALL WORKS
+                    {activeTab === 'all' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('games')}
+                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                      activeTab === 'games' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                    }`}
+                  >
+                    [02] INTERACTIVE GAMES
+                    {activeTab === 'games' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('tools')}
+                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                      activeTab === 'tools' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                    }`}
+                  >
+                    [03] CRAFTED TOOLS
+                    {activeTab === 'tools' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                  </button>
+                </div>
+              </section>
+
+              {/* Editorial Magazine Grid */}
+              <section className="py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  {filteredProjects.map((project, index) => (
+                    <motion.div
+                      key={project.title}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                      className="group relative rounded-3xl border border-amber-500/15 bg-[#1C1815]/60 backdrop-blur-md p-10 flex flex-col justify-between transition-all duration-500 hover:border-amber-400/40 hover:shadow-[0_10px_40px_rgba(245,158,11,0.08)]"
+                    >
+                      <div>
+                        <div className="flex justify-between items-center mb-8">
+                          <span className="text-xs font-mono tracking-widest text-amber-400/80 uppercase">
+                            // 0{index + 1} — {project.badge}
+                          </span>
+                          <span className="text-xs font-mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                            {project.category.toUpperCase()}
+                          </span>
+                        </div>
+
+                        <h3 className="text-3xl font-serif font-light mb-4 group-hover:text-amber-200 transition-colors text-[#F5F0EB]">
+                          {project.title}
+                        </h3>
+
+                        <p className="text-[#A39B93] text-base leading-relaxed mb-8 font-light">
+                          {project.description}
+                        </p>
+
+                        <div className="flex gap-2 flex-wrap mb-10">
+                          {project.tags.map(tag => (
+                            <span key={tag} className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#D4CFC7]">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="pt-6 border-t border-white/10 flex items-center justify-between">
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm font-mono tracking-wider text-amber-300 hover:text-amber-200 transition-colors group/link"
+                        >
+                          <span className="border-b border-amber-400/40 pb-0.5 group-hover/link:border-amber-300">EXPLORE LIVE EXPERIENCE</span>
+                          <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                        </a>
+                        <span className="text-xs font-mono text-[#78716C]">EDITION 2026</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
             </motion.div>
           )}
         </AnimatePresence>
