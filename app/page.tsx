@@ -12,11 +12,17 @@ import {
   Activity,
   LayoutGrid,
   BookOpen,
-  ChevronDown
+  ChevronDown,
+  Shield,
+  Briefcase,
+  Mail,
+  Terminal,
+  Cpu,
+  Star
 } from 'lucide-react';
 
 export default function Home() {
-  const [layoutMode, setLayoutMode] = useState<'cyberpunk' | 'editorial'>('cyberpunk');
+  const [layoutMode, setLayoutMode] = useState<'cyberpunk' | 'editorial' | 'retro'>('cyberpunk');
   const [activeTab, setActiveTab] = useState<'all' | 'games' | 'tools'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -29,6 +35,8 @@ export default function Home() {
       link: "https://game-hex-grid-4bj7.vercel.app/",
       badge: "Featured Game",
       span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
+      retroBg: "bg-[#FFE500]", // Bright Yellow
+      retroColor: "text-black"
     },
     {
       title: "AI 視覺小說引擎",
@@ -38,6 +46,8 @@ export default function Home() {
       link: "https://game-visual-novel.vercel.app/",
       badge: "Engine v1.0",
       span: "col-span-1 md:col-span-1 lg:col-span-1",
+      retroBg: "bg-[#FF007F]", // Hot Pink
+      retroColor: "text-white"
     },
     {
       title: "PivotLens Stock App",
@@ -47,6 +57,8 @@ export default function Home() {
       link: "https://pivotlens-stock-app-jynp9vfi7zghuaums3kgrk.streamlit.app/",
       badge: "FinTech",
       span: "col-span-1 md:col-span-1 lg:col-span-1",
+      retroBg: "bg-[#00FF66]", // Neon Green
+      retroColor: "text-black"
     },
     {
       title: "AI 製作倒水遊戲",
@@ -56,6 +68,8 @@ export default function Home() {
       link: "https://water-sort-local.vercel.app/",
       badge: "Casual",
       span: "col-span-1 md:col-span-1 lg:col-span-1",
+      retroBg: "bg-[#00F0FF]", // Cyan
+      retroColor: "text-black"
     },
     {
       title: "AI 影音素材庫與自動化爬蟲",
@@ -65,6 +79,8 @@ export default function Home() {
       link: "https://material-downloader-ttnv95mw5cqepbglpwog2j.streamlit.app/",
       badge: "Automation",
       span: "col-span-1 md:col-span-2 lg:col-span-2",
+      retroBg: "bg-[#9D4EDD]", // Purple
+      retroColor: "text-white"
     }
   ];
 
@@ -72,56 +88,72 @@ export default function Home() {
     ? projects 
     : projects.filter(p => p.category === activeTab);
 
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-700 relative overflow-hidden font-sans ${
       layoutMode === 'cyberpunk' 
         ? 'bg-zinc-950 text-zinc-100 selection:bg-cyan-500/30 selection:text-cyan-200' 
-        : 'bg-[#12100E] text-[#F5F0EB] selection:bg-amber-500/30 selection:text-amber-200'
+        : layoutMode === 'editorial'
+        ? 'bg-[#12100E] text-[#F5F0EB] selection:bg-amber-500/30 selection:text-amber-200'
+        : 'bg-[#FFFDF5] text-black selection:bg-[#FFE500] selection:text-black'
     }`}>
       
-      {/* Dynamic Background Ambiance */}
+      {/* Background Ambiance */}
       {layoutMode === 'cyberpunk' ? (
         <>
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
         </>
-      ) : (
+      ) : layoutMode === 'editorial' ? (
         <>
           <div className="absolute top-0 left-1/3 w-[700px] h-[700px] bg-amber-600/10 rounded-full blur-[160px] pointer-events-none" />
           <div className="absolute bottom-1/4 right-10 w-[600px] h-[600px] bg-rose-600/10 rounded-full blur-[180px] pointer-events-none" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:5rem_5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
         </>
+      ) : (
+        /* Neo-Brutalism Dot Grid Background */
+        <div className="absolute inset-0 bg-[radial-gradient(#00000015_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
       )}
 
       {/* Main Container */}
-      <main className="relative max-w-7xl mx-auto px-6 pt-10 pb-32 z-10">
+      <main className={`relative max-w-7xl mx-auto px-6 ${layoutMode === 'retro' ? 'pt-6' : 'pt-10'} pb-32 z-10`}>
         
         {/* Header Layout Switcher Bar */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className={`flex flex-wrap items-center justify-between gap-4 mb-12 p-4 rounded-2xl backdrop-blur-xl border transition-colors duration-500 ${
+          className={`flex flex-wrap items-center justify-between gap-4 mb-10 p-4 rounded-2xl backdrop-blur-xl transition-colors duration-500 ${
             layoutMode === 'cyberpunk' 
-              ? 'bg-white/[0.02] border-white/10 text-cyan-400' 
-              : 'bg-white/[0.03] border-amber-500/20 text-amber-400'
+              ? 'bg-white/[0.02] border border-white/15 text-cyan-400' 
+              : layoutMode === 'editorial'
+              ? 'bg-white/[0.03] border border-amber-500/20 text-amber-400'
+              : 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
           }`}
         >
           <div className="flex items-center gap-3">
             <div className={`flex items-center justify-center w-10 h-10 rounded-xl border ${
               layoutMode === 'cyberpunk' 
                 ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' 
-                : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                : layoutMode === 'editorial'
+                ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                : 'bg-[#FFE500] border-4 border-black font-black text-black'
             }`}>
-              {layoutMode === 'cyberpunk' ? <Activity className="w-5 h-5 animate-pulse" /> : <BookOpen className="w-5 h-5" />}
+              {layoutMode === 'cyberpunk' ? <Activity className="w-5 h-5 animate-pulse" /> : layoutMode === 'editorial' ? <BookOpen className="w-5 h-5" /> : '👾'}
             </div>
             <div>
-              <div className="text-xs font-mono tracking-wider">
-                {layoutMode === 'cyberpunk' ? 'SYSTEM_READY // LAUNCHER_v2.5' : 'EDITORIAL_EDITION // VOL. 04'}
+              <div className="text-xs font-mono tracking-wider font-bold">
+                {layoutMode === 'cyberpunk' ? 'SYSTEM_READY // LAUNCHER_v2.5' : layoutMode === 'editorial' ? 'EDITORIAL_EDITION // VOL. 04' : 'PLAYER_MODE // RETRO_v1.0'}
               </div>
-              <div className={`text-sm font-bold ${layoutMode === 'cyberpunk' ? 'text-zinc-200' : 'text-[#F5F0EB]'}`}>
-                {layoutMode === 'cyberpunk' ? 'AI ENGINEERING & GAME CORE' : 'FASHION & WARM ARCHITECTURE'}
+              <div className={`text-sm font-bold ${layoutMode === 'cyberpunk' ? 'text-zinc-200' : layoutMode === 'editorial' ? 'text-[#F5F0EB]' : 'text-black font-black'}`}>
+                {layoutMode === 'cyberpunk' ? 'AI ENGINEERING & GAME CORE' : layoutMode === 'editorial' ? 'FASHION & WARM ARCHITECTURE' : 'NEO-BRUTALISM RETRO ARCADE'}
               </div>
             </div>
           </div>
@@ -130,14 +162,16 @@ export default function Home() {
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-mono border transition-all duration-300 ${
+              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-mono border transition-all duration-300 font-bold ${
                 layoutMode === 'cyberpunk'
                   ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20'
-                  : 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
+                  : layoutMode === 'editorial'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20'
+                  : 'bg-[#00FF66] border-4 border-black shadow-[2px_2px_0px_#000] text-black hover:translate-x-0.5 hover:translate-y-0.5'
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
-              <span>版型: {layoutMode === 'cyberpunk' ? 'Cyberpunk Launcher' : 'Fashion Editorial'}</span>
+              <span>版型: {layoutMode === 'cyberpunk' ? 'Cyberpunk Launcher' : layoutMode === 'editorial' ? 'Fashion Editorial' : 'Retro Arcade'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -148,10 +182,12 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className={`absolute right-0 mt-2 w-60 rounded-2xl border shadow-2xl overflow-hidden z-50 backdrop-blur-2xl ${
+                  className={`absolute right-0 mt-2 w-64 rounded-2xl border shadow-2xl overflow-hidden z-50 backdrop-blur-2xl ${
                     layoutMode === 'cyberpunk'
-                      ? 'bg-zinc-900/90 border-zinc-800 text-zinc-200'
-                      : 'bg-[#1C1815]/90 border-amber-900/40 text-[#F5F0EB]'
+                      ? 'bg-zinc-900/95 border-zinc-800 text-zinc-200'
+                      : layoutMode === 'editorial'
+                      ? 'bg-[#1C1815]/95 border-amber-900/40 text-[#F5F0EB]'
+                      : 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
                   }`}
                 >
                   <div className="p-2 space-y-1">
@@ -172,6 +208,15 @@ export default function Home() {
                     >
                       <span>✨ Fashion Editorial (Warm)</span>
                       {layoutMode === 'editorial' && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
+                    </button>
+                    <button
+                      onClick={() => { setLayoutMode('retro'); setDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors font-bold ${
+                        layoutMode === 'retro' ? 'bg-[#FFE500] text-black font-black' : 'hover:bg-black/5 text-black'
+                      }`}
+                    >
+                      <span>👾 Retro Arcade (Neo-Brutalism)</span>
+                      {layoutMode === 'retro' && <span className="w-2 h-2 rounded-full bg-black" />}
                     </button>
                   </div>
                 </motion.div>
@@ -303,7 +348,7 @@ export default function Home() {
                 </div>
               </section>
             </motion.div>
-          ) : (
+          ) : layoutMode === 'editorial' ? (
             /* ==================== EDITORIAL FASHION WARM LAYOUT ==================== */
             <motion.div
               key="editorial"
@@ -417,24 +462,217 @@ export default function Home() {
                 </div>
               </section>
             </motion.div>
+          ) : (
+            /* ==================== RETRO NEO-BRUTALISM ARCADE LAYOUT ==================== */
+            <motion.div
+              key="retro"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-24"
+            >
+              {/* Retro Navbar / Sub-sticky bar for Retro Mode */}
+              <nav className="sticky top-20 z-45 bg-[#FFE500] border-4 border-black p-4 rounded-2xl shadow-[6px_6px_0px_#000] flex flex-wrap items-center justify-between gap-4">
+                <div className="font-black text-xl tracking-wider flex items-center gap-2">
+                  <span className="bg-black text-[#FFE500] px-2 py-1 rounded-lg">PLAYER 1</span>
+                  <span>ARCADE PORTFOLIO</span>
+                </div>
+                <div className="flex gap-3 flex-wrap">
+                  <button 
+                    onClick={() => scrollToSection('stats')}
+                    className="px-4 py-2 bg-white border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
+                  >
+                    ⚡ 玩家狀態
+                  </button>
+                  <button 
+                    onClick={() => scrollToSection('inventory')}
+                    className="px-4 py-2 bg-[#00FF66] border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
+                  >
+                    🎒 道具箱
+                  </button>
+                  <button 
+                    onClick={() => scrollToSection('footer')}
+                    className="px-4 py-2 bg-[#FF007F] text-white border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
+                  >
+                    📡 連線
+                  </button>
+                </div>
+              </nav>
+
+              {/* Hero Section (Retro Game Style) */}
+              <section className="min-h-[80vh] flex flex-col items-center justify-center text-center py-12">
+                <div className="inline-block bg-[#00F0FF] border-4 border-black px-6 py-2 rounded-2xl font-black text-sm mb-6 shadow-[4px_4px_0px_#000] rotate-[-2deg]">
+                  ✨ INSERT COIN TO START ✨
+                </div>
+
+                <h1 className="text-4xl sm:text-7xl font-black tracking-tight mb-6 max-w-4xl leading-tight">
+                  我是 <span className="bg-[#FFE500] px-3 py-1 border-4 border-black rounded-2xl shadow-[4px_4px_0px_#000] inline-block">Yusuke</span>，把 AI 當作外掛的遊戲企劃 👾
+                </h1>
+
+                <p className="text-xl font-bold max-w-2xl mb-10 text-neutral-800 bg-white border-4 border-black p-4 rounded-2xl shadow-[4px_4px_0px_#000]">
+                  結合前端自動化架構與高維度邏輯推導。打破常規，將每個專案化為令人愛不釋手的像素冒險。
+                </p>
+
+                <button
+                  onClick={() => scrollToSection('inventory')}
+                  className="px-10 py-5 bg-[#FF007F] text-white font-black text-2xl border-4 border-black rounded-2xl shadow-[6px_6px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#000] transition-all active:translate-x-1.5 active:translate-y-1.5"
+                >
+                  🚀 START GAME
+                </button>
+              </section>
+
+              {/* Stats Section (能力面板) */}
+              <section id="stats" className="bg-white border-4 border-black p-8 sm:p-12 rounded-3xl shadow-[8px_8px_0px_#000]">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-12 h-12 bg-[#FFE500] border-4 border-black rounded-2xl flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000]">
+                    📊
+                  </div>
+                  <h2 className="text-3xl font-black tracking-tight">玩家能力面板 (PLAYER STATS)</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {/* Skill 1 */}
+                  <div className="bg-[#FFFDF5] border-4 border-black p-6 rounded-2xl shadow-[4px_4px_0px_#000]">
+                    <div className="flex justify-between font-black text-lg mb-2">
+                      <span>企劃發想力</span>
+                      <span className="text-[#FF007F]">LV.99</span>
+                    </div>
+                    <div className="w-full bg-white border-3 border-black h-6 rounded-xl overflow-hidden p-1 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.2)]">
+                      <div className="bg-[#00FF66] h-full rounded-lg border-2 border-black w-[95%]" />
+                    </div>
+                    <p className="text-xs font-bold mt-3 text-neutral-600">具備架構化核心機制與防死鎖驗證思維。</p>
+                  </div>
+
+                  {/* Skill 2 */}
+                  <div className="bg-[#FFFDF5] border-4 border-black p-6 rounded-2xl shadow-[4px_4px_0px_#000]">
+                    <div className="flex justify-between font-black text-lg mb-2">
+                      <span>AI Prompt 詠唱</span>
+                      <span className="text-[#FF007F]">LV.95</span>
+                    </div>
+                    <div className="w-full bg-white border-3 border-black h-6 rounded-xl overflow-hidden p-1 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.2)]">
+                      <div className="bg-[#00F0FF] h-full rounded-lg border-2 border-black w-[90%]" />
+                    </div>
+                    <p className="text-xs font-bold mt-3 text-neutral-600">精準驅動 Hermes Agent 與 Gemini 進行極速自動開發。</p>
+                  </div>
+
+                  {/* Skill 3 */}
+                  <div className="bg-[#FFFDF5] border-4 border-black p-6 rounded-2xl shadow-[4px_4px_0px_#000]">
+                    <div className="flex justify-between font-black text-lg mb-2">
+                      <span>Python 實作</span>
+                      <span className="text-[#FF007F]">LV.90</span>
+                    </div>
+                    <div className="w-full bg-white border-3 border-black h-6 rounded-xl overflow-hidden p-1 shadow-[inset_2px_2px_0px_rgba(0,0,0,0.2)]">
+                      <div className="bg-[#FFE500] h-full rounded-lg border-2 border-black w-[85%]" />
+                    </div>
+                    <p className="text-xs font-bold mt-3 text-neutral-600">建構自動化爬蟲、Streamlit 儀表板與 YAMNet 影音特徵分析。</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Inventory / Projects Section (道具箱) */}
+              <section id="inventory" className="space-y-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-[#00FF66] border-4 border-black rounded-2xl flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000]">
+                    🎒
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black tracking-tight">玩家道具箱 (INVENTORY)</h2>
+                    <p className="text-sm font-bold text-neutral-600">已解鎖的傳說級裝備與專案作品</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredProjects.map((project, index) => (
+                    <motion.div
+                      key={project.title}
+                      whileHover={{ scale: 1.03, rotate: index % 2 === 0 ? 1 : -1 }}
+                      className={`border-4 border-black p-6 rounded-3xl ${project.retroBg} shadow-[6px_6px_0px_#000] flex flex-col justify-between transition-transform duration-200`}
+                    >
+                      <div>
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="bg-black text-white font-black text-xs px-3 py-1 rounded-xl">
+                            SLOT 0{index + 1}
+                          </span>
+                          <span className="bg-white border-2 border-black font-black text-xs px-2.5 py-1 rounded-lg">
+                            {project.badge}
+                          </span>
+                        </div>
+
+                        <h3 className="text-2xl font-black mb-3 text-black">
+                          {project.title}
+                        </h3>
+
+                        <p className="font-bold text-sm mb-6 text-neutral-900 leading-relaxed">
+                          {project.description}
+                        </p>
+
+                        <div className="flex gap-2 flex-wrap mb-6">
+                          {project.tags.map(tag => (
+                            <span key={tag} className="bg-white border-2 border-black font-black text-xs px-2.5 py-1 rounded-lg shadow-[2px_2px_0px_#000]">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-3 bg-black text-white font-black rounded-xl border-2 border-black shadow-[3px_3px_0px_rgba(255,255,255,0.8)] hover:bg-[#FFE500] hover:text-black transition-all text-center flex items-center justify-center gap-2"
+                      >
+                        <span>裝備並遊玩 (EQUIP)</span>
+                        <ArrowUpRight className="w-4 h-4" />
+                      </a>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Footer / Connect Section (連線) */}
+              <footer id="footer" className="bg-black text-white border-4 border-black p-12 rounded-3xl shadow-[8px_8px_0px_#FFE500] text-center space-y-6">
+                <div className="inline-block bg-[#00FF66] text-black font-black px-4 py-1.5 rounded-xl border-2 border-white text-sm">
+                  ⚡ READY TO PARTY?
+                </div>
+                <h2 className="text-3xl sm:text-5xl font-black">準備好一起組隊冒險了嗎？</h2>
+                <p className="text-neutral-400 font-bold max-w-xl mx-auto">
+                  無論是遊戲企劃、AI 系統整合還是前端工程，隨時歡迎發送組隊邀請！
+                </p>
+                <div className="pt-4 flex flex-wrap justify-center gap-4">
+                  <a
+                    href="mailto:yusuke@example.com"
+                    className="px-8 py-4 bg-[#FFE500] text-black font-black rounded-2xl border-4 border-white shadow-[4px_4px_0px_#FFF] hover:bg-[#00FF66] transition-all flex items-center gap-3 text-lg"
+                  >
+                    <Mail className="w-5 h-5" />
+                    <span>聯絡信箱 (SEND MAIL)</span>
+                  </a>
+                </div>
+                <div className="pt-8 text-xs font-mono text-neutral-500">
+                  © 2026 RETRO ARCADE PORTFOLIO. ALL RIGHTS RESERVED.
+                </div>
+              </footer>
+            </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Footer */}
-        <motion.footer 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className={`mt-32 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono transition-colors duration-500 ${
-            layoutMode === 'cyberpunk' ? 'border-white/10 text-zinc-500' : 'border-white/10 text-[#78716C]'
-          }`}
-        >
-          <div>© 2026 CREATIVE PORTFOLIO. ALL RIGHTS RESERVED.</div>
-          <div className="flex items-center gap-6">
-            <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">CURATED WITH PASSION</span>
-            <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">DUAL-MODE ARCHITECTURE</span>
-          </div>
-        </motion.footer>
+        {/* Footer for non-retro modes */}
+        {layoutMode !== 'retro' && (
+          <motion.footer 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className={`mt-32 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono transition-colors duration-500 ${
+              layoutMode === 'cyberpunk' ? 'border-white/10 text-zinc-500' : 'border-white/10 text-[#78716C]'
+            }`}
+          >
+            <div>© 2026 CREATIVE PORTFOLIO. ALL RIGHTS RESERVED.</div>
+            <div className="flex items-center gap-6">
+              <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">CURATED WITH PASSION</span>
+              <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">TRIPLE-MODE ARCHITECTURE</span>
+            </div>
+          </motion.footer>
+        )}
 
       </main>
     </div>
