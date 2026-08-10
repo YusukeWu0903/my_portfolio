@@ -130,7 +130,7 @@ export default function Home() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className={`flex flex-wrap items-center justify-between gap-4 mb-10 p-4 rounded-2xl backdrop-blur-xl transition-colors duration-500 ${
+          className={`flex flex-wrap items-center justify-between gap-4 mb-10 p-4 rounded-2xl backdrop-blur-xl transition-colors duration-500 relative z-50 ${
             layoutMode === 'retro'
               ? 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
               : layoutMode === 'cyberpunk' 
@@ -159,7 +159,7 @@ export default function Home() {
           </div>
 
           {/* Layout Switcher Dropdown */}
-          <div className="relative">
+          <div className="relative z-[100]">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-mono border transition-all duration-300 font-bold ${
@@ -182,7 +182,7 @@ export default function Home() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className={`absolute right-0 mt-2 w-64 rounded-2xl border shadow-2xl overflow-hidden z-50 backdrop-blur-2xl ${
+                  className={`absolute right-0 mt-2 w-64 rounded-2xl border shadow-2xl overflow-hidden z-[9999] backdrop-blur-2xl ${
                     layoutMode === 'retro'
                       ? 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
                       : layoutMode === 'cyberpunk'
@@ -238,7 +238,7 @@ export default function Home() {
               className="space-y-24"
             >
               {/* Retro Navbar / Sub-sticky bar for Retro Mode */}
-              <nav className="sticky top-20 z-45 bg-[#FFE500] border-4 border-black p-4 rounded-2xl shadow-[6px_6px_0px_#000] flex flex-wrap items-center justify-between gap-4">
+              <nav className="sticky top-20 z-30 bg-[#FFE500] border-4 border-black p-4 rounded-2xl shadow-[6px_6px_0px_#000] flex flex-wrap items-center justify-between gap-4">
                 <div className="font-black text-xl tracking-wider flex items-center gap-2">
                   <span className="bg-black text-[#FFE500] px-2 py-1 rounded-lg">PLAYER 1</span>
                   <span>ARCADE PORTFOLIO</span>
