@@ -336,7 +336,7 @@ export default function Home() {
               </section>
 
               {/* Inventory / Projects Section (道具箱) */}
-              <section id="inventory" className="space-y-8">
+                            <section id="projects" className="space-y-8">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-[#00FF66] border-4 border-black rounded-2xl flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000]">
                     🎒
@@ -484,7 +484,7 @@ export default function Home() {
               </section>
 
               {/* Bento Grid */}
-              <section className="py-6">
+                            <section id="projects" className="py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[340px]">
                   {filteredProjects.map((project, index) => (
                     <motion.div
@@ -598,7 +598,7 @@ export default function Home() {
               </section>
 
               {/* Editorial Magazine Grid */}
-              <section className="py-6">
+                            <section id="projects" className="py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   {filteredProjects.map((project, index) => (
                     <motion.div
