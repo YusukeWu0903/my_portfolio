@@ -292,7 +292,7 @@ export default function Home() {
                 </p>
 
                 <button
-                  onClick={() => scrollToSection('inventory')}
+                  onClick={() => scrollToSection('projects')}
                   className="px-10 py-5 bg-[#FF007F] text-white font-black text-2xl border-4 border-black rounded-2xl shadow-[6px_6px_0px_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#000] transition-all active:translate-x-1.5 active:translate-y-1.5"
                 >
                   🚀 START GAME
