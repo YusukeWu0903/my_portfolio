@@ -20,9 +20,9 @@ export default function RootLayout({
               LOGO
             </div>
             <div className="flex gap-6 text-sm font-medium">
-              <a href="#" className="hover:text-cyan-400 transition-colors">首頁</a>
-              <a href="#projects" className="hover:text-cyan-400 transition-colors">專案展示</a>
-            </div>
+                          <a href="#" className="hover:text-cyan-400 transition-colors">首頁</a>
+                          <a href="#projects" className="hover:text-cyan-400 transition-colors">作品展示</a>
+                        </div>
           </div>
         </nav>
         {children}

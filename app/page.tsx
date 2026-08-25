@@ -23,7 +23,7 @@ import {
 
 export default function Home() {
   const [layoutMode, setLayoutMode] = useState<'retro' | 'cyberpunk' | 'editorial'>('retro');
-  const [activeTab, setActiveTab] = useState<'all' | 'games' | 'tools'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'games' | 'tools' | 'art'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const projects = [
@@ -84,8 +84,20 @@ export default function Home() {
     }
   ];
 
-  const filteredProjects = activeTab === 'all' 
-    ? projects 
+  const categoryLabels: Record<string, string> = {
+    games: "遊戲開發",
+    tools: "工具開發",
+    art: "AI美術"
+  };
+
+  const categoryIcons: Record<string, React.ElementType> = {
+    games: Gamepad2,
+    tools: Wrench,
+    art: Sparkles
+  };
+
+  const filteredProjects = activeTab === 'all'
+    ? projects
     : projects.filter(p => p.category === activeTab);
 
   const scrollToSection = (id: string) => {
@@ -446,41 +458,52 @@ export default function Home() {
                 </p>
 
                 {/* Filter Tabs */}
-                <div className="flex flex-wrap gap-3 p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
-                  <button
-                    onClick={() => setActiveTab('all')}
-                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
-                      activeTab === 'all' 
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
-                    }`}
-                  >
-                    <Zap className="w-4 h-4" />
-                    <span>全部專案 (All)</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('games')}
-                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
-                      activeTab === 'games' 
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
-                    }`}
-                  >
-                    <Gamepad2 className="w-4 h-4" />
-                    <span>互動遊戲 (Games)</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('tools')}
-                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
-                      activeTab === 'tools' 
-                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
-                    }`}
-                  >
-                    <Wrench className="w-4 h-4" />
-                    <span>高階工具 (Tools)</span>
-                  </button>
-                </div>
+                                <div className="flex flex-wrap gap-3 p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                                  <button
+                                    onClick={() => setActiveTab('all')}
+                                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                                      activeTab === 'all'
+                                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]'
+                                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <Zap className="w-4 h-4" />
+                                    <span>全部作品 (All)</span>
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveTab('games')}
+                                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                                      activeTab === 'games'
+                                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]'
+                                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <Gamepad2 className="w-4 h-4" />
+                                    <span>遊戲開發 (Games)</span>
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveTab('tools')}
+                                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                                      activeTab === 'tools'
+                                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]'
+                                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <Wrench className="w-4 h-4" />
+                                    <span>工具開發 (Tools)</span>
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveTab('art')}
+                                    className={`px-6 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                                      activeTab === 'art'
+                                        ? 'bg-cyan-500 text-zinc-950 font-bold shadow-[0_0_25px_rgba(0,240,255,0.4)]'
+                                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <Sparkles className="w-4 h-4" />
+                                    <span>AI美術 (Art)</span>
+                                  </button>
+                                </div>
               </section>
 
               {/* Bento Grid */}
@@ -498,13 +521,13 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-blue-500/10 to-transparent opacity-40 group-hover:opacity-80 transition-opacity duration-500 pointer-events-none" />
 
                       <div className="relative z-10 flex justify-between items-start mb-6">
-                        <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 backdrop-blur-md">
-                          {project.badge}
-                        </span>
-                        <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-cyan-400 group-hover:border-cyan-500/45 transition-all duration-300">
-                          {project.category === 'games' ? <Gamepad2 className="w-5 h-5" /> : <Wrench className="w-5 h-5" />}
-                        </div>
-                      </div>
+                                              <span className="text-xs font-mono px-3 py-1 rounded-full bg-white/5 border border-white/10 text-zinc-300 backdrop-blur-md">
+                                                {project.badge}
+                                              </span>
+                                              <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-400 group-hover:text-cyan-400 group-hover:border-cyan-500/45 transition-all duration-300">
+                                                {categoryIcons[project.category] && React.createElement(categoryIcons[project.category], { className: "w-5 h-5" })}
+                                              </div>
+                                            </div>
 
                       <div className="relative z-10 my-auto">
                         <h3 className="text-2xl font-bold mb-3 tracking-tight group-hover:text-cyan-300 transition-colors duration-300">
@@ -566,35 +589,44 @@ export default function Home() {
                 </p>
 
                 {/* Editorial Filter Tabs */}
-                <div className="flex flex-wrap gap-4 border-b border-white/10 pb-4 w-full">
-                  <button
-                    onClick={() => setActiveTab('all')}
-                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
-                      activeTab === 'all' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
-                    }`}
-                  >
-                    [01] ALL WORKS
-                    {activeTab === 'all' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('games')}
-                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
-                      activeTab === 'games' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
-                    }`}
-                  >
-                    [02] INTERACTIVE GAMES
-                    {activeTab === 'games' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('tools')}
-                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
-                      activeTab === 'tools' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
-                    }`}
-                  >
-                    [03] CRAFTED TOOLS
-                    {activeTab === 'tools' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
-                  </button>
-                </div>
+                                <div className="flex flex-wrap gap-4 border-b border-white/10 pb-4 w-full">
+                                  <button
+                                    onClick={() => setActiveTab('all')}
+                                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                                      activeTab === 'all' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                                    }`}
+                                  >
+                                    [01] ALL WORKS
+                                    {activeTab === 'all' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveTab('games')}
+                                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                                      activeTab === 'games' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                                    }`}
+                                  >
+                                    [02] GAME DEV
+                                    {activeTab === 'games' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveTab('tools')}
+                                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                                      activeTab === 'tools' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                                    }`}
+                                  >
+                                    [03] TOOL DEV
+                                    {activeTab === 'tools' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                                  </button>
+                                  <button
+                                    onClick={() => setActiveTab('art')}
+                                    className={`text-sm font-mono tracking-wider transition-colors pb-2 relative ${
+                                      activeTab === 'art' ? 'text-amber-300 font-bold' : 'text-[#A39B93] hover:text-[#F5F0EB]'
+                                    }`}
+                                  >
+                                    [04] AI ART
+                                    {activeTab === 'art' && <span className="absolute bottom-[-17px] left-0 right-0 h-[2px] bg-amber-400" />}
+                                  </button>
+                                </div>
               </section>
 
               {/* Editorial Magazine Grid */}
@@ -611,13 +643,13 @@ export default function Home() {
                     >
                       <div>
                         <div className="flex justify-between items-center mb-8">
-                          <span className="text-xs font-mono tracking-widest text-amber-400/80 uppercase">
-                            // 0{index + 1} — {project.badge}
-                          </span>
-                          <span className="text-xs font-mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                            {project.category.toUpperCase()}
-                          </span>
-                        </div>
+                                                  <span className="text-xs font-mono tracking-widest text-amber-400/80 uppercase">
+                                                    // 0{index + 1} — {project.badge}
+                                                  </span>
+                                                  <span className="text-xs font-mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                                                    {categoryLabels[project.category] || project.category.toUpperCase()}
+                                                  </span>
+                                                </div>
 
                         <h3 className="text-3xl font-serif font-light mb-4 group-hover:text-amber-200 transition-colors text-[#F5F0EB]">
                           {project.title}
