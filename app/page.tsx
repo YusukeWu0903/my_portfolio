@@ -277,6 +277,17 @@ export default function Home() {
                               </div>
                             </nav>
 
+                            {/* Inventory Title - moved above Filter Tabs */}
+                            <div className="mb-6 flex items-center gap-3">
+                              <div className="w-12 h-12 bg-[#00FF66] border-4 border-black rounded-2xl flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000]">
+                                🎒
+                              </div>
+                              <div>
+                                <h2 className="text-3xl font-black tracking-tight">玩家道具箱 (INVENTORY)</h2>
+                                <p className="text-sm font-bold text-neutral-600">已解鎖的傳說級裝備與專案作品</p>
+                              </div>
+                            </div>
+
                             {/* Retro Filter Tabs */}
                             <div className="sticky top-[140px] z-20 mb-8">
                               <div className="flex flex-wrap gap-3 p-2 bg-white border-4 border-black rounded-2xl shadow-[4px_4px_0px_#000]">
@@ -399,17 +410,7 @@ export default function Home() {
 
               {/* Inventory / Projects Section (道具箱) */}
                             <section id="projects" className="space-y-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#00FF66] border-4 border-black rounded-2xl flex items-center justify-center font-black text-xl shadow-[3px_3px_0px_#000]">
-                    🎒
-                  </div>
-                  <div>
-                    <h2 className="text-3xl font-black tracking-tight">玩家道具箱 (INVENTORY)</h2>
-                    <p className="text-sm font-bold text-neutral-600">已解鎖的傳說級裝備與專案作品</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProjects.map((project, index) => (
                     <motion.div
                       key={project.title}
