@@ -250,32 +250,82 @@ export default function Home() {
               className="space-y-24"
             >
               {/* Retro Navbar / Sub-sticky bar for Retro Mode */}
-              <nav className="sticky top-20 z-30 bg-[#FFE500] border-4 border-black p-4 rounded-2xl shadow-[6px_6px_0px_#000] flex flex-wrap items-center justify-between gap-4">
-                <div className="font-black text-xl tracking-wider flex items-center gap-2">
-                  <span className="bg-black text-[#FFE500] px-2 py-1 rounded-lg">PLAYER 1</span>
-                  <span>ARCADE PORTFOLIO</span>
-                </div>
-                <div className="flex gap-3 flex-wrap">
-                  <button 
-                    onClick={() => scrollToSection('stats')}
-                    className="px-4 py-2 bg-white border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
-                  >
-                    ⚡ 玩家狀態
-                  </button>
-                  <button 
-                    onClick={() => scrollToSection('inventory')}
-                    className="px-4 py-2 bg-[#00FF66] border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
-                  >
-                    🎒 道具箱
-                  </button>
-                  <button 
-                    onClick={() => scrollToSection('footer')}
-                    className="px-4 py-2 bg-[#FF007F] text-white border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
-                  >
-                    📡 連線
-                  </button>
-                </div>
-              </nav>
+                            <nav className="sticky top-20 z-30 bg-[#FFE500] border-4 border-black p-4 rounded-2xl shadow-[6px_6px_0px_#000] flex flex-wrap items-center justify-between gap-4">
+                              <div className="font-black text-xl tracking-wider flex items-center gap-2">
+                                <span className="bg-black text-[#FFE500] px-2 py-1 rounded-lg">PLAYER 1</span>
+                                <span>ARCADE PORTFOLIO</span>
+                              </div>
+                              <div className="flex gap-3 flex-wrap">
+                                <button 
+                                  onClick={() => scrollToSection('stats')}
+                                  className="px-4 py-2 bg-white border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
+                                >
+                                  ⚡ 玩家狀態
+                                </button>
+                                <button 
+                                  onClick={() => scrollToSection('projects')}
+                                  className="px-4 py-2 bg-[#00FF66] border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
+                                >
+                                  🎒 道具箱
+                                </button>
+                                <button 
+                                  onClick={() => scrollToSection('footer')}
+                                  className="px-4 py-2 bg-[#FF007F] text-white border-3 border-black rounded-xl font-bold shadow-[3px_3px_0px_#000] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000] transition-all text-sm"
+                                >
+                                  📡 連線
+                                </button>
+                              </div>
+                            </nav>
+
+                            {/* Retro Filter Tabs */}
+                            <div className="sticky top-[140px] z-20 mb-8">
+                              <div className="flex flex-wrap gap-3 p-2 bg-white border-4 border-black rounded-2xl shadow-[4px_4px_0px_#000]">
+                                <button
+                                  onClick={() => setActiveTab('all')}
+                                  className={`px-5 py-2.5 rounded-xl font-black text-sm transition-all duration-200 shadow-[2px_2px_0px_#000] ${
+                                    activeTab === 'all'
+                                      ? 'bg-black text-white'
+                                      : 'bg-[#FFFDF5] text-black hover:bg-[#FFE500] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000]'
+                                  }`}
+                                >
+                                  <Zap className="w-4 h-4 inline-block mr-1" />
+                                  全部作品
+                                </button>
+                                <button
+                                  onClick={() => setActiveTab('games')}
+                                  className={`px-5 py-2.5 rounded-xl font-black text-sm transition-all duration-200 shadow-[2px_2px_0px_#000] ${
+                                    activeTab === 'games'
+                                      ? 'bg-[#FF007F] text-white'
+                                      : 'bg-[#FFFDF5] text-black hover:bg-[#FFE500] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000]'
+                                  }`}
+                                >
+                                  <Gamepad2 className="w-4 h-4 inline-block mr-1" />
+                                  遊戲開發
+                                </button>
+                                <button
+                                  onClick={() => setActiveTab('tools')}
+                                  className={`px-5 py-2.5 rounded-xl font-black text-sm transition-all duration-200 shadow-[2px_2px_0px_#000] ${
+                                    activeTab === 'tools'
+                                      ? 'bg-[#00FF66] text-black'
+                                      : 'bg-[#FFFDF5] text-black hover:bg-[#FFE500] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000]'
+                                  }`}
+                                >
+                                  <Wrench className="w-4 h-4 inline-block mr-1" />
+                                  工具開發
+                                </button>
+                                <button
+                                  onClick={() => setActiveTab('art')}
+                                  className={`px-5 py-2.5 rounded-xl font-black text-sm transition-all duration-200 shadow-[2px_2px_0px_#000] ${
+                                    activeTab === 'art'
+                                      ? 'bg-[#9D4EDD] text-white'
+                                      : 'bg-[#FFFDF5] text-black hover:bg-[#FFE500] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#000]'
+                                  }`}
+                                >
+                                  <Sparkles className="w-4 h-4 inline-block mr-1" />
+                                  AI美術
+                                </button>
+                              </div>
+                            </div>
 
               {/* Hero Section (Retro Game Style) */}
               <section className="min-h-[80vh] flex flex-col items-center justify-center text-center py-12">
@@ -367,31 +417,36 @@ export default function Home() {
                       className={`border-4 border-black p-6 rounded-3xl ${project.retroBg} shadow-[6px_6px_0px_#000] flex flex-col justify-between transition-transform duration-200`}
                     >
                       <div>
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="bg-black text-white font-black text-xs px-3 py-1 rounded-xl">
-                            SLOT 0{index + 1}
-                          </span>
-                          <span className="bg-white border-2 border-black font-black text-xs px-2.5 py-1 rounded-lg">
-                            {project.badge}
-                          </span>
-                        </div>
+                                              <div className="flex justify-between items-center mb-4">
+                                                <span className="bg-black text-white font-black text-xs px-3 py-1 rounded-xl">
+                                                  SLOT 0{index + 1}
+                                                </span>
+                                                <span className="bg-white border-2 border-black font-black text-xs px-2.5 py-1 rounded-lg">
+                                                  {project.badge}
+                                                </span>
+                                              </div>
 
-                        <h3 className="text-2xl font-black mb-3 text-black">
-                          {project.title}
-                        </h3>
+                                              <h3 className="text-2xl font-black mb-3 text-black">
+                                                {project.title}
+                                              </h3>
 
-                        <p className="font-bold text-sm mb-6 text-neutral-900 leading-relaxed">
-                          {project.description}
-                        </p>
+                                              <p className="font-bold text-sm mb-6 text-neutral-900 leading-relaxed">
+                                                {project.description}
+                                              </p>
 
-                        <div className="flex gap-2 flex-wrap mb-6">
-                          {project.tags.map(tag => (
-                            <span key={tag} className="bg-white border-2 border-black font-black text-xs px-2.5 py-1 rounded-lg shadow-[2px_2px_0px_#000]">
-                              #{tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                                              <div className="flex gap-2 flex-wrap mb-6">
+                                                {project.tags.map(tag => (
+                                                  <span key={tag} className="bg-white border-2 border-black font-black text-xs px-2.5 py-1 rounded-lg shadow-[2px_2px_0px_#000]">
+                                                    #{tag}
+                                                  </span>
+                                                ))}
+                                              </div>
+
+                                              <div className="flex items-center gap-2 text-xs font-black text-neutral-700 mb-4">
+                                                {categoryIcons[project.category] && React.createElement(categoryIcons[project.category], { className: "w-4 h-4" })}
+                                                <span>{categoryLabels[project.category]}</span>
+                                              </div>
+                                            </div>
 
                       <a
                         href={project.link}
