@@ -5,7 +5,7 @@ import {validateDeformation,serializeSettings,parseSettings,deformPoint} from '.
 import {buildExpression,applyExpressivePose,advanceSpring,sharedGazeTarget} from './expression.mjs';
 import {assertViewerDefaults,resolveQualityProfile} from './quality-profile.mjs?v=21';
 const $=id=>document.getElementById(id);
-const task=new URLSearchParams(location.search).get('local');
+const task=new URLSearchParams(location.search).get('local')||'Eris_full_body_casual_20260918_113905';
 $('legacy').href='/preview-rig?local='+encodeURIComponent(task||'');
 const REF=['backhair','handwear','legwear','topwear','neck','bottomwear','earwear','ears','face','mouth','eyelash','nose','eyebrow','irides','fronthair'];
 const LOC=['handwear','legwear','topwear','backhair','footwear','earwear','neck','bottomwear','eyebrow','ears','face','nose','mouth','eyelash','eyewhite','irides','fronthair'];
