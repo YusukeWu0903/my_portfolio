@@ -42,7 +42,7 @@ function resize(){const d=Math.min(devicePixelRatio,2);canvas.width=guides.width
 addEventListener('resize',resize);resize();
 async function load(names,prefix){return Promise.all(names.map(async name=>{const image=new Image();image.src=prefix+name+'.png';try{await image.decode();}catch{throw new Error('圖層載入失敗：'+name);}return {name,image};}));}
 async function ensureCloud(){
-  if(!cloudPromise)cloudPromise=load(REF,'./layers/seethrough/').then(layers=>(cloud=layers));
+  if(!cloudPromise)cloudPromise=load(REF,'/eris-demo/layers/seethrough/').then(layers=>(cloud=layers));
   return cloudPromise;
 }
 async function loadEyeAssets(prefix){
@@ -82,7 +82,7 @@ async function loadSeamAssets(prefix){
 }
 try{
   if(!task)throw new Error('請提供 local 任務名稱');
-  const [response,baselineResponse]=await Promise.all([fetch('./viewer-assets/eris-deform.json'),fetch('./viewer-assets/quality-baseline.json',{cache:'no-store'})]);
+  const [response,baselineResponse]=await Promise.all([fetch('/eris-demo/viewer-assets/eris-deform.json'),fetch('/eris-demo/viewer-assets/quality-baseline.json',{cache:'no-store'})]);
   if(!response.ok)throw new Error('角色設定載入失敗');
   if(!baselineResponse.ok)throw new Error('正式規格基準載入失敗');
   const preset=validateDeformation(await response.json());
@@ -110,7 +110,7 @@ try{
   catch(e){$('settings-status').textContent='保存設定無法載入，改用預設：'+e.message;}
   const renderer=createMeshRenderer(canvas,{maxUpload:quality.maxUpload});
   canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();$('status').textContent='繪圖環境中斷，請重新整理頁面。';});
-  const localPrefix='./layers/seethrough_local/'+encodeURIComponent(task)+'/';
+  const localPrefix='/eris-demo/layers/seethrough_local/'+encodeURIComponent(task)+'/';
   // The cloud comparison is optional and expensive: decoding it alongside the
   // local rig can exceed Chromium's renderer memory before the first frame.
   // Load it only if the user explicitly switches the comparison selector.
