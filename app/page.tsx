@@ -87,7 +87,7 @@ export default function Home() {
       category: "art",
       description: "以語義 RGBA 圖層、WebGL 變形與受限視線／眨眼系統打造的即時 2D 角色展示。支援呼吸、髮絲、姿勢、視線與核准的肩頸修補。",
       tags: ["WebGL", "RGBA Layers", "Interactive Rig"],
-      link: "/eris-demo/",
+      link: "https://character-see-through.vercel.app/",
       badge: "AI Art Rig",
       span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
       retroBg: "bg-[#9D4EDD]",
