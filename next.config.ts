@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/eris-demo", destination: "/eris-demo/index.html" },
       { source: "/eris-demo/", destination: "/eris-demo/index.html" },
+      { source: "/miffy-demo", destination: "/miffy-demo/index.html" },
+      { source: "/miffy-demo/", destination: "/miffy-demo/index.html" },
     ];
   },
 };
