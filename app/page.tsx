@@ -96,10 +96,10 @@ export default function Home() {
     {
       title: "Miffy · AI 角色分層互動展示",
       category: "art",
-      description: "第二位分層角色的製作中版本。可操作全身待機與滑鼠跟隨、眨眼、視線及局部胸部動態；肩膀接縫與獨立手腳仍待後續修整。",
+      description: "Miffy 的 v40 階段展示：可操作全身待機、滑鼠跟隨、眨眼與視線，以及頭部、胸部、臀部與雙手的有限度動態。表情與效能仍待後續完善。",
       tags: ["RGBA Layers", "Interactive Rig", "Work in Progress"],
       link: "/miffy-demo/",
-      badge: "製作中 · v21",
+      badge: "階段展示 · v40",
       span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
       retroBg: "bg-[#C7B3E5]",
       retroColor: "text-black"
