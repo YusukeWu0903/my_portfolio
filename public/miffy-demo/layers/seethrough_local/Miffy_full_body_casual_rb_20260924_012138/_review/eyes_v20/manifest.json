@@ -26,11 +26,11 @@
       ],
       "base": {
         "asset": "left_base.png",
-        "sha256": "81370A0A0B594D8DA186C6B38A637FF7FAB5FC1F8688E2090BFB051328330C15"
+        "sha256": "861B2B64D0CC5105F8ED4FB776EFFC82E251D437AA1963D7137EEF185137B01A"
       },
       "open": {
         "asset": "left_open.png",
-        "sha256": "2E858D9D25305ECE7D6494E70B860859A2616A794610D1BD35DD86816ECF56F9"
+        "sha256": "AAA6A82C5961C0EB59D1895530A70053944A05D6EA6816F4390AEE0B57D93790"
       },
       "closed": {
         "asset": "left_closed.png",
@@ -38,7 +38,7 @@
       },
       "white": {
         "asset": "left_white.png",
-        "sha256": "FF7B1631AC0F90D2E6C84B668B68C7CE6BCA6FBC7F37C66C57C4636E5AB7BDC6"
+        "sha256": "4B33591123DC7F57AB09A0CB018EABEE5F10C47A9F3D20BB1A3808EFDB936A7B"
       },
       "iris": {
         "asset": "left_iris.png",
@@ -51,6 +51,10 @@
       "mask": {
         "asset": "left_mask.png",
         "sha256": "1E4FE1CDF104F4FCA3F7278661B90134E1809693A6AD0402FCCE51BA512CF60A"
+      },
+      "openMotion": {
+        "asset": "left_open_motion.png",
+        "sha256": "AAA6A82C5961C0EB59D1895530A70053944A05D6EA6816F4390AEE0B57D93790"
       }
     },
     "right": {
@@ -111,19 +115,28 @@
     "sourceHeadSha256": "D5FBF0F9DAA8686F1C571BB7392F5AD042A439575A66B076A6DE30AEC221DD8C",
     "irisBacking": "exact canonical iris pixels only"
   },
-  "note": "Eye backing ear-overlap repair candidate; neutral open artwork and blink timing unchanged. Moving visual approval pending.",
-  "priorManifest": "outputs/seethrough_local/Miffy_full_body_casual_rb_20260924_012138/_review/eyes_v14/manifest.json",
-  "priorManifestSha256": "E06EB92F491EFCE4E6038376A4342E6285CEE20F8DFC10BEB57991870FF30402",
+  "note": "Eye backing ear-overlap repair candidate; blink timing unchanged. Moving visual approval pending.",
+  "priorManifest": "outputs/seethrough_local/Miffy_full_body_casual_rb_20260924_012138/_review/eyes_v19/manifest.json",
+  "priorManifestSha256": "BF08DB878DBC08740403D3856F0851D9663EC1DCECCB2CE6725B780BB442A78E",
   "edgeCleanup": {
-    "side": "right",
-    "featherStartX": 667,
-    "zeroFromX": 670,
+    "side": "left",
+    "zeroThroughX": 582,
+    "featherEndX": 583,
+    "lowerRootBounds": [
+      583,
+      114,
+      589,
+      125
+    ],
     "affected": [
       "base",
+      "open",
       "white",
       "openMotion"
     ],
     "method": "alpha-only backing crop taper",
-    "note": "The neutral open asset remains unchanged; moving open has the measured eye-only edge."
+    "underlay": "outputs/seethrough_local/Miffy_full_body_casual_rb_20260924_012138/_review/cheek_outline_v1/head.png",
+    "underlaySha256": "BE75B0C6F92F4361587D097062A51175BD3552A58E6C22E84BF95064092E547C",
+    "note": "Neutral ear pixels are removed from the eye asset only after exact RGBA match against the fixed head underlay."
   }
 }

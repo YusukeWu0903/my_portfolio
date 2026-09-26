@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "Miffy_full_body_casual_rb_20260924_012138",
-  "candidate": "cheek_outline_v1",
+  "candidate": "ankle_hip_v1",
   "reviewStatus": "pending",
   "nonProduction": true,
   "source": "Character/002_Miffy/Miffy_full_body_casual_rb.png",
@@ -34,9 +34,10 @@
     },
     {
       "file": "footwear.png",
-      "label": "腳部",
+      "label": "腳部（腳踝裁切邊清理候選）",
       "group": "下半身",
-      "parent": "legs"
+      "parent": "legs",
+      "asset": "_review/ankle_hip_v1/footwear.png"
     },
     {
       "file": "earwear.png",
@@ -152,7 +153,8 @@
     "整頭來自光頭版原畫，先作靜態畫面驗收；眼白、虹膜、睫毛、眉毛與嘴巴暫時併入整頭，尚不能獨立眨眼、視線或口型。",
     "前髮髮際、雙耳遮擋及整頭外輪廓的靜態外觀已獲使用者確認，仍待頭髮與頭部獨立移動檢查。",
     "頸根與兩側肩膀接縫採局部 alpha 清理，靜態及頭部上下各 6px 初檢改善；手臂獨立水平位移 6px 仍有關節露邊，須在左右手臂拆分與肩部 rig 階段處理。",
-    "左臉頰描邊已補三個來源像素，仍待使用者看靜態與頭／髮分開運動驗收。"
+    "左臉頰描邊已補三個來源像素，仍待使用者看靜態與頭／髮分開運動驗收。",
+    "腳踝橫線清理與臀部動態候選待使用者在實際移動預覽中驗收。"
   ],
   "headSource": "Character/002_Miffy/Miffy_face_bd.png",
   "headSourceSha256": "6A49F1D7BD73C944486E041762E037B8C01852FE8B717375B9517F4D8D2464C2",
@@ -186,7 +188,7 @@
       ]
     }
   ],
-  "rollbackManifest": "_review/seam_v2/assembly.json",
+  "rollbackManifest": "_review/cheek_outline_v1/assembly.json",
   "faceContourRepair": {
     "input": "outputs/seethrough_local/Miffy_full_body_casual_rb_20260924_012138/_review/full_head_v8/head.png",
     "inputSha256": "D5FBF0F9DAA8686F1C571BB7392F5AD042A439575A66B076A6DE30AEC221DD8C",
@@ -281,5 +283,20 @@
         "alpha": 211
       }
     ]
+  },
+  "ankleRepair": {
+    "method": "footwear top-edge alpha attenuation over opaque leg underlay",
+    "input": "footwear.png",
+    "asset": "_review/ankle_hip_v1/footwear.png",
+    "assetSha256": "E5810C92D8CE00C951281C2A50549394B1F65F8E5484430CED05050318A53A82",
+    "changedPixels": 527,
+    "bounds": [
+      595,
+      1104,
+      665,
+      1119
+    ],
+    "alphaIncreases": 0,
+    "rgbChanges": 0
   }
 }
