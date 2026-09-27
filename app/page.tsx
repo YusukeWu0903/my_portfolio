@@ -103,6 +103,17 @@ export default function Home() {
       span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
       retroBg: "bg-[#C7B3E5]",
       retroColor: "text-black"
+    },
+    {
+      title: "Mimi · AI 角色分層互動展示",
+      category: "art",
+      description: "雲端分層與本地組裝修復，搭配原生 1280 圖層、滑鼠重心跟隨、肩膀運動代償與裙襬延遲擺動。眨眼與表情尚未製作。",
+      tags: ["WebGL", "RGBA Layers", "Secondary Motion"],
+      link: "/mimi-demo/",
+      badge: "階段展示 · v62",
+      span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
+      retroBg: "bg-[#B8D9CF]",
+      retroColor: "text-black"
     }
   ];
 
