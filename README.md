@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Adding a portfolio project
+
+1. Capture a screenshot of the running project and save it in `public/project-previews/`.
+2. Add one entry to `app/data/projects.ts` with a unique `id`, title, category, description, live link, and screenshot path. Keep the other fields filled in for the original layouts.
+3. Publish the site. The new project appears in all layouts automatically and joins the works-first carousel on the next page load; all projects except Water Sort are shuffled, with Water Sort kept last.
+
+The default works-first layout shows one card on phones, two on medium screens, and three on wide screens. It advances one card left every five seconds. The layout menu keeps the three original designs available.
+
 ## Getting Started
 
 First, run the development server:

@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import WorksFirstShowcase from './WorksFirstShowcase';
+import { projects, type PortfolioProject } from './data/projects';
 import { 
   Gamepad2, 
   Wrench, 
-  ExternalLink, 
   Sparkles, 
   ArrowUpRight,
   Zap,
@@ -13,109 +14,28 @@ import {
   LayoutGrid,
   BookOpen,
   ChevronDown,
-  Shield,
-  Briefcase,
   Mail,
-  Terminal,
-  Cpu,
-  Star
 } from 'lucide-react';
 
 export default function Home() {
-  const [layoutMode, setLayoutMode] = useState<'retro' | 'cyberpunk' | 'editorial'>('retro');
+  const [layoutMode, setLayoutMode] = useState<'showcase' | 'retro' | 'cyberpunk' | 'editorial'>('showcase');
   const [activeTab, setActiveTab] = useState<'all' | 'games' | 'tools' | 'art'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [shuffledProjects, setShuffledProjects] = useState<PortfolioProject[]>([]);
 
-  const projects = [
-    {
-      title: "Hex Grid 戰棋遊戲",
-      category: "games",
-      description: "基於六角網格（Hex Grid）的策略戰棋網頁遊戲，具備精密的戰術移動、回合制對戰與動態路徑計算機制。",
-      tags: ["Next.js", "Tailwind", "Tactical Strategy"],
-      link: "https://game-hex-grid-4bj7.vercel.app/",
-      badge: "Featured Game",
-      span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
-      retroBg: "bg-[#FFE500]", // Bright Yellow
-      retroColor: "text-black"
-    },
-    {
-      title: "AI 視覺小說引擎",
-      category: "games",
-      description: "現代網頁視覺小說框架。支援結構化劇本解析、動態背景音效與沉浸式互動介面。",
-      tags: ["Next.js", "Tailwind", "Python Pipeline"],
-      link: "https://game-visual-novel.vercel.app/",
-      badge: "Engine v1.0",
-      span: "col-span-1 md:col-span-1 lg:col-span-1",
-      retroBg: "bg-[#FF007F]", // Hot Pink
-      retroColor: "text-white"
-    },
-    {
-      title: "PivotLens Stock App",
-      category: "tools",
-      description: "即時股票數據分析平台，提供專業的 Pivot Lens 技術指標視覺化與自動化推導工具。",
-      tags: ["Python", "Streamlit", "Data Analysis"],
-      link: "https://pivotlens-stock-app-jynp9vfi7zghuaums3kgrk.streamlit.app/",
-      badge: "FinTech",
-      span: "col-span-1 md:col-span-1 lg:col-span-1",
-      retroBg: "bg-[#00FF66]", // Neon Green
-      retroColor: "text-black"
-    },
-    {
-      title: "AI 製作倒水遊戲",
-      category: "games",
-      description: "結合 Gemini 與自動化驗證的益智倒水遊戲，支援多層次關卡編輯器與防死鎖演算法。",
-      tags: ["Next.js", "React", "Puzzle"],
-      link: "https://water-sort-local.vercel.app/",
-      badge: "Casual",
-      span: "col-span-1 md:col-span-1 lg:col-span-1",
-      retroBg: "bg-[#00F0FF]", // Cyan
-      retroColor: "text-black"
-    },
-    {
-      title: "AI 影音素材庫與自動化爬蟲",
-      category: "tools",
-      description: "整合 YAMNet AI 音訊特徵分析與 SQLite WAL 並發資料庫的內部素材檢索系統。",
-      tags: ["Python", "YAMNet AI", "SQLite"],
-      link: "https://material-downloader-ttnv95mw5cqepbglpwog2j.streamlit.app/",
-      badge: "Automation",
-      span: "col-span-1 md:col-span-2 lg:col-span-2",
-      retroBg: "bg-[#9D4EDD]", // Purple
-      retroColor: "text-white"
-    },
-    {
-      title: "Eris · AI 角色分層互動展示",
-      category: "art",
-      description: "以語義 RGBA 圖層、WebGL 變形與受限視線／眨眼系統打造的即時 2D 角色展示。支援呼吸、髮絲、姿勢、視線與核准的肩頸修補。",
-      tags: ["WebGL", "RGBA Layers", "Interactive Rig"],
-      link: "/eris-demo/",
-      badge: "AI Art Rig",
-      span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
-      retroBg: "bg-[#9D4EDD]",
-      retroColor: "text-white"
-    },
-    {
-      title: "Miffy · AI 角色分層互動展示",
-      category: "art",
-      description: "原生高解析分層角色，搭載共用 GPU 動態、頭部三軸微轉與光影、眨眼視線跟隨、六種口形，以及頭髮、胸部、臀部與手臂擺動。",
-      tags: ["RGBA Layers", "Interactive Rig", "Work in Progress"],
-      link: "/miffy-demo/",
-      badge: "階段展示 · v50",
-      span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
-      retroBg: "bg-[#C7B3E5]",
-      retroColor: "text-black"
-    },
-    {
-      title: "Mimi · AI 角色分層互動展示",
-      category: "art",
-      description: "雲端分層與本地組裝修復，搭配原生 1280 圖層、滑鼠重心跟隨、肩膀運動代償、裙襬與髮梢擺動，並可眨眼及切換閉眼嘟嘴表情。",
-      tags: ["WebGL", "RGBA Layers", "Secondary Motion"],
-      link: "/mimi-demo/",
-      badge: "階段展示 · v78",
-      span: "col-span-1 md:col-span-2 lg:col-span-2 row-span-2",
-      retroBg: "bg-[#B8D9CF]",
-      retroColor: "text-black"
-    }
-  ];
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const waterSortProject = projects.find(project => project.id === 'water-sort');
+      const shuffled = projects.filter(project => project.id !== 'water-sort');
+      for (let index = shuffled.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+      }
+      if (waterSortProject) shuffled.push(waterSortProject);
+      setShuffledProjects(shuffled);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const categoryLabels: Record<string, string> = {
     games: "遊戲開發",
@@ -142,7 +62,9 @@ export default function Home() {
 
   return (
     <div className={`min-h-screen transition-colors duration-700 relative overflow-hidden font-sans ${
-      layoutMode === 'retro'
+      layoutMode === 'showcase'
+        ? 'bg-[#FFFDF5] text-black selection:bg-[#FFE500] selection:text-black'
+        : layoutMode === 'retro'
         ? 'bg-[#FFFDF5] text-black selection:bg-[#FFE500] selection:text-black'
         : layoutMode === 'cyberpunk' 
         ? 'bg-zinc-950 text-zinc-100 selection:bg-cyan-500/30 selection:text-cyan-200' 
@@ -150,7 +72,9 @@ export default function Home() {
     }`}>
       
       {/* Background Ambiance */}
-      {layoutMode === 'retro' ? (
+      {layoutMode === 'showcase' ? (
+        <div className="absolute inset-0 bg-[radial-gradient(#0000000d_1px,transparent_1px)] bg-[size:26px_26px] pointer-events-none" />
+      ) : layoutMode === 'retro' ? (
         /* Neo-Brutalism Dot Grid Background */
         <div className="absolute inset-0 bg-[radial-gradient(#00000015_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
       ) : layoutMode === 'cyberpunk' ? (
@@ -168,15 +92,17 @@ export default function Home() {
       )}
 
       {/* Main Container */}
-      <main className={`relative max-w-7xl mx-auto px-6 ${layoutMode === 'retro' ? 'pt-6' : 'pt-10'} pb-32 z-10`}>
+      <main className={`relative max-w-7xl mx-auto px-6 ${layoutMode === 'retro' || layoutMode === 'showcase' ? 'pt-6' : 'pt-10'} pb-32 z-10`}>
         
         {/* Header Layout Switcher Bar */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className={`flex flex-wrap items-center justify-between gap-4 mb-10 p-4 rounded-2xl backdrop-blur-xl transition-colors duration-500 relative z-50 ${
-            layoutMode === 'retro'
+          className={`flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl backdrop-blur-xl transition-colors duration-500 relative z-50 ${layoutMode === 'showcase' ? 'mb-6' : 'mb-10'} ${
+            layoutMode === 'showcase'
+              ? 'bg-white border-2 border-black shadow-[3px_3px_0px_#000] text-black'
+              : layoutMode === 'retro'
               ? 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
               : layoutMode === 'cyberpunk' 
               ? 'bg-white/[0.02] border border-white/15 text-cyan-400' 
@@ -185,20 +111,22 @@ export default function Home() {
         >
           <div className="flex items-center gap-3">
             <div className={`flex items-center justify-center w-10 h-10 rounded-xl border ${
-              layoutMode === 'retro'
+              layoutMode === 'showcase'
+                ? 'bg-[#FFE500] border-2 border-black text-black'
+                : layoutMode === 'retro'
                 ? 'bg-[#FFE500] border-4 border-black font-black text-black'
                 : layoutMode === 'cyberpunk' 
                 ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' 
                 : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
             }`}>
-              {layoutMode === 'retro' ? '👾' : layoutMode === 'cyberpunk' ? <Activity className="w-5 h-5 animate-pulse" /> : <BookOpen className="w-5 h-5" />}
+              {layoutMode === 'showcase' ? <LayoutGrid className="w-5 h-5" /> : layoutMode === 'retro' ? '👾' : layoutMode === 'cyberpunk' ? <Activity className="w-5 h-5 animate-pulse" /> : <BookOpen className="w-5 h-5" />}
             </div>
             <div>
               <div className="text-xs font-mono tracking-wider font-bold">
-                {layoutMode === 'retro' ? 'PLAYER_MODE // RETRO_v1.0' : layoutMode === 'cyberpunk' ? 'SYSTEM_READY // LAUNCHER_v2.5' : 'EDITORIAL_EDITION // VOL. 04'}
+                {layoutMode === 'showcase' ? 'WORKS_FIRST // GALLERY' : layoutMode === 'retro' ? 'PLAYER_MODE // RETRO_v1.0' : layoutMode === 'cyberpunk' ? 'SYSTEM_READY // LAUNCHER_v2.5' : 'EDITORIAL_EDITION // VOL. 04'}
               </div>
-              <div className={`text-sm font-bold ${layoutMode === 'retro' ? 'text-black font-black' : layoutMode === 'cyberpunk' ? 'text-zinc-200' : 'text-[#F5F0EB]'}`}>
-                {layoutMode === 'retro' ? 'NEO-BRUTALISM RETRO ARCADE' : layoutMode === 'cyberpunk' ? 'AI ENGINEERING & GAME CORE' : 'FASHION & WARM ARCHITECTURE'}
+              <div className={`text-sm font-bold ${layoutMode === 'showcase' || layoutMode === 'retro' ? 'text-black font-black' : layoutMode === 'cyberpunk' ? 'text-zinc-200' : 'text-[#F5F0EB]'}`}>
+                {layoutMode === 'showcase' ? '遊戲 × 工具 × AI 美術' : layoutMode === 'retro' ? 'NEO-BRUTALISM RETRO ARCADE' : layoutMode === 'cyberpunk' ? 'AI ENGINEERING & GAME CORE' : 'FASHION & WARM ARCHITECTURE'}
               </div>
             </div>
           </div>
@@ -208,7 +136,9 @@ export default function Home() {
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-mono border transition-all duration-300 font-bold ${
-                layoutMode === 'retro'
+                layoutMode === 'showcase'
+                  ? 'bg-[#FFE500] border-2 border-black text-black hover:bg-[#00E6A0]'
+                  : layoutMode === 'retro'
                   ? 'bg-[#00FF66] border-4 border-black shadow-[2px_2px_0px_#000] text-black hover:translate-x-0.5 hover:translate-y-0.5'
                   : layoutMode === 'cyberpunk'
                   ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20'
@@ -216,7 +146,7 @@ export default function Home() {
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
-              <span>版型: {layoutMode === 'retro' ? 'Retro Arcade' : layoutMode === 'cyberpunk' ? 'Cyberpunk Launcher' : 'Fashion Editorial'}</span>
+              <span>版型: {layoutMode === 'showcase' ? '作品優先' : layoutMode === 'retro' ? 'Retro Arcade' : layoutMode === 'cyberpunk' ? 'Cyberpunk Launcher' : 'Fashion Editorial'}</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -228,7 +158,9 @@ export default function Home() {
                   exit={{ opacity: 0, y: 8, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
                   className={`absolute right-0 mt-2 w-64 rounded-2xl border shadow-2xl overflow-hidden z-[9999] backdrop-blur-2xl ${
-                    layoutMode === 'retro'
+                    layoutMode === 'showcase'
+                      ? 'bg-white border-2 border-black text-black'
+                      : layoutMode === 'retro'
                       ? 'bg-white border-4 border-black shadow-[4px_4px_0px_#000] text-black'
                       : layoutMode === 'cyberpunk'
                       ? 'bg-zinc-900/95 border-zinc-800 text-zinc-200'
@@ -237,9 +169,18 @@ export default function Home() {
                 >
                   <div className="p-2 space-y-1">
                     <button
+                      onClick={() => { setLayoutMode('showcase'); setDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors font-bold ${
+                        layoutMode === 'showcase' ? 'bg-[#FFE500] text-black' : layoutMode === 'retro' ? 'hover:bg-neutral-100 text-black' : 'hover:bg-white/10 text-zinc-200'
+                      }`}
+                    >
+                      <span>🖼️ 作品優先 (自動輪播)</span>
+                      {layoutMode === 'showcase' && <span className="w-2 h-2 rounded-full bg-black" />}
+                    </button>
+                    <button
                       onClick={() => { setLayoutMode('retro'); setDropdownOpen(false); }}
                       className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors font-bold ${
-                        layoutMode === 'retro' ? 'bg-[#FFE500] text-black font-black' : 'hover:bg-black/5 text-black'
+                        layoutMode === 'retro' ? 'bg-[#FFE500] text-black font-black' : layoutMode === 'showcase' ? 'hover:bg-black/5 text-black' : 'hover:bg-white/10 text-zinc-200'
                       }`}
                     >
                       <span>👾 Retro Arcade (Neo-Brutalism)</span>
@@ -248,7 +189,7 @@ export default function Home() {
                     <button
                       onClick={() => { setLayoutMode('cyberpunk'); setDropdownOpen(false); }}
                       className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors ${
-                        layoutMode === 'cyberpunk' ? 'bg-cyan-500/20 text-cyan-300 font-bold' : 'hover:bg-white/5 text-zinc-400'
+                        layoutMode === 'cyberpunk' ? 'bg-cyan-500/20 text-cyan-300 font-bold' : layoutMode === 'showcase' || layoutMode === 'retro' ? 'hover:bg-black/5 text-black' : 'hover:bg-white/5 text-zinc-300'
                       }`}
                     >
                       <span>⚡ Cyberpunk Launcher</span>
@@ -257,7 +198,7 @@ export default function Home() {
                     <button
                       onClick={() => { setLayoutMode('editorial'); setDropdownOpen(false); }}
                       className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors ${
-                        layoutMode === 'editorial' ? 'bg-amber-500/20 text-amber-300 font-bold' : 'hover:bg-white/5 text-zinc-400'
+                        layoutMode === 'editorial' ? 'bg-amber-500/20 text-amber-300 font-bold' : layoutMode === 'showcase' || layoutMode === 'retro' ? 'hover:bg-black/5 text-black' : 'hover:bg-white/5 text-zinc-300'
                       }`}
                     >
                       <span>✨ Fashion Editorial (Warm)</span>
@@ -272,7 +213,17 @@ export default function Home() {
 
         {/* Layout Switcher Renderer */}
         <AnimatePresence mode="wait">
-          {layoutMode === 'retro' ? (
+          {layoutMode === 'showcase' ? (
+            <motion.div
+              key="showcase"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <WorksFirstShowcase projects={shuffledProjects} />
+            </motion.div>
+          ) : layoutMode === 'retro' ? (
             /* ==================== RETRO NEO-BRUTALISM ARCADE LAYOUT ==================== */
             <motion.div
               key="retro"
@@ -445,7 +396,7 @@ export default function Home() {
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredProjects.map((project, index) => (
                     <motion.div
-                      key={project.title}
+                      key={project.id}
                       whileHover={{ scale: 1.03, rotate: index % 2 === 0 ? 1 : -1 }}
                       className={`border-4 border-black p-6 rounded-3xl ${project.retroBg} shadow-[6px_6px_0px_#000] flex flex-col justify-between transition-transform duration-200`}
                     >
@@ -599,7 +550,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[340px]">
                   {filteredProjects.map((project, index) => (
                     <motion.div
-                      key={project.title}
+                      key={project.id}
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -722,7 +673,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   {filteredProjects.map((project, index) => (
                     <motion.div
-                      key={project.title}
+                      key={project.id}
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -732,7 +683,7 @@ export default function Home() {
                       <div>
                         <div className="flex justify-between items-center mb-8">
                                                   <span className="text-xs font-mono tracking-widest text-amber-400/80 uppercase">
-                                                    // 0{index + 1} — {project.badge}
+                                                    {'// '}0{index + 1} — {project.badge}
                                                   </span>
                                                   <span className="text-xs font-mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
                                                     {categoryLabels[project.category] || project.category.toUpperCase()}
@@ -783,13 +734,13 @@ export default function Home() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className={`mt-32 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono transition-colors duration-500 ${
-              layoutMode === 'cyberpunk' ? 'border-white/10 text-zinc-500' : 'border-white/10 text-[#78716C]'
+              layoutMode === 'showcase' ? 'border-black/15 text-neutral-600' : layoutMode === 'cyberpunk' ? 'border-white/10 text-zinc-500' : 'border-white/10 text-[#78716C]'
             }`}
           >
             <div>© 2026 CREATIVE PORTFOLIO. ALL RIGHTS RESERVED.</div>
             <div className="flex items-center gap-6">
               <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">CURATED WITH PASSION</span>
-              <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">TRIPLE-MODE ARCHITECTURE</span>
+              <span className="hover:opacity-100 opacity-70 transition-opacity cursor-pointer">{layoutMode === 'showcase' ? `${projects.length} 個作品 · 自動輪播` : 'FOUR-MODE ARCHITECTURE'}</span>
             </div>
           </motion.footer>
         )}
