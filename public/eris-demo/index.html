@@ -2,10 +2,10 @@
 <html lang="zh-Hant">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>角色姿勢、雙眼視線與眼瞼 · 第六階段</title>
+<title>Eris · 互動展示</title>
 <style>
 :root{
-  --panel-w:290px;
+  --panel-w:350px;
   --panel-bg:#101319ed;
   --border:#53606b;
   --accent:#7ee8ff;
@@ -18,7 +18,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:#15181d;color:var(--text);font:14px system-ui}
 canvas{position:fixed;inset:0;width:100%;height:100%}
-header{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-around;pointer-events:none;z-index:10}
+header{position:fixed;top:12px;left:12px;right:calc(var(--panel-w) + 12px);display:flex;justify-content:center;pointer-events:none;z-index:10}
 header span{background:#000a;padding:7px;border-radius:8px;font-size:12px}
 
 /* Collapsible side panel */
@@ -90,22 +90,20 @@ h1 small{font-size:11px;color:var(--muted);font-weight:400}
 /* Responsive */
 @media(max-width:900px){
   :root{--panel-w:100vw}
-  .side-panel{width:100vw;right:-100vw}
-  header{font-size:11px}
-  .panel-toggle{display:none}
+  .side-panel{top:auto;left:0;right:0;bottom:0;width:100vw;height:38dvh;max-height:38dvh;border-left:0;border-top:1px solid var(--border);transform:none}
+  .side-panel:not(.open){transform:translateY(calc(100% - 42px))}
+  header{left:12px;right:12px;font-size:11px}
+  .panel-toggle{top:auto;right:12px;bottom:calc(38dvh - 38px);transform:none;width:52px;height:34px;border:1px solid var(--border);border-bottom:0;border-radius:8px 8px 0 0}
 }
 </style>
 
 <canvas id="stage"></canvas>
 <canvas id="guides" style="pointer-events:none"></canvas>
 
-<header>
-  <span id="left-title">本機素材 · 剛性</span>
-  <span>本機素材 · 柔性</span>
-</header>
+<header><span>Eris · 單人展示</span></header>
 
 <!-- Collapsible Side Panel -->
-<div class="side-panel" id="sidePanel">
+<div class="side-panel open" id="sidePanel">
   <div class="panel-tabs" role="tablist">
     <button class="panel-tab active" role="tab" data-tab="controls" aria-selected="true">控制面板</button>
     <button class="panel-tab" role="tab" data-tab="layers" aria-selected="false">圖層開關</button>
@@ -114,7 +112,6 @@ h1 small{font-size:11px;color:var(--muted);font-weight:400}
   <div class="panel-content active" id="tab-controls" role="tabpanel">
     <section class="panel-section">
       <h2>姿勢與動態</h2>
-      <label>對照<select id="compare"><option value="cloud" disabled>雲端／本機，同步姿勢</option><option value="rigid" selected>同一本機素材，剛性／柔性</option></select></label>
       <label>身體側傾<input id="body" type="range" min="-100" max="100" value="0"><output></output></label>
       <label>上身側彎<input id="torso" type="range" min="-100" max="100" value="0"><output></output></label>
       <label>頭部側傾<input id="head" type="range" min="-100" max="100" value="0"><output></output></label>
@@ -186,5 +183,5 @@ h1 small{font-size:11px;color:var(--muted);font-weight:400}
   </svg>
 </button>
 
-<script type="module" src="/eris-demo/viewer-assets/deform-preview.mjs?v=31"></script>
+<script type="module" src="/eris-demo/viewer-assets/deform-preview.mjs?v=32-single-view"></script>
 </html>

@@ -10,7 +10,6 @@ $('legacy').href='/';
 const REF=['backhair','handwear','legwear','topwear','neck','bottomwear','earwear','ears','face','mouth','eyelash','nose','eyebrow','irides','fronthair'];
 const LOC=['handwear','legwear','topwear','backhair','footwear','earwear','neck','bottomwear','eyebrow','ears','face','nose','mouth','eyelash','eyewhite','irides','fronthair'];
 const controls={};
-let cloud=null,cloudPromise=null;
 for(const name of ['body','torso','head','breath','hair','energy','bust','yaw','gaze-x','gaze-y','blink']){
   const el=$(name),update=()=>{controls[name]=Number(el.value)/100;el.nextElementSibling.value=el.value;};
   el.addEventListener('input',update);update();
@@ -22,10 +21,6 @@ $('neutral').onclick=neutral;
 let productionViewer=null;
 $('defaults').onclick=()=>{if(!productionViewer)return;values(productionViewer.controls);for(const [name,value] of Object.entries(productionViewer.toggles))$(name).checked=value;};
 $('blink-now').onclick=()=>{values({blink:100});setTimeout(()=>values({blink:0}),180);};
-$('compare').onchange=async()=>{
-  $('left-title').textContent=$('compare').value==='cloud'?'雲端素材 · 柔性':'本機素材 · 剛性';
-  if($('compare').value==='cloud')try{await ensureCloud();}catch(e){$('status').textContent='雲端對照素材載入失敗：'+e.message;}
-};
 // ===== 面板開關 =====
 (function(){
   const sp=document.getElementById('sidePanel');
@@ -68,10 +63,6 @@ canvas.addEventListener('pointerleave',()=>{tx=0;ty=0;});
 function resize(){const d=Math.min(devicePixelRatio,2);canvas.width=guides.width=Math.round(innerWidth*d);canvas.height=guides.height=Math.round(innerHeight*d);}
 addEventListener('resize',resize);resize();
 async function load(names,prefix){return Promise.all(names.map(async name=>{const image=new Image();image.src=prefix+name+'.png';try{await image.decode();}catch{throw new Error('圖層載入失敗：'+name);}return {name,image};}));}
-async function ensureCloud(){
-  if(!cloudPromise)cloudPromise=load(REF,'/eris-demo/layers/seethrough/').then(layers=>(cloud=layers));
-  return cloudPromise;
-}
 async function loadEyeAssets(prefix){
   const response=await fetch(prefix+'_rig_assets/eye_assets.json',{cache:'no-store'});
   if(!response.ok)return null;
@@ -138,9 +129,6 @@ try{
   const renderer=createMeshRenderer(canvas,{maxUpload:quality.maxUpload});
   canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();$('status').textContent='繪圖環境中斷，請重新整理頁面。';});
   const localPrefix='/eris-demo/layers/seethrough_local/'+encodeURIComponent(task)+'/';
-  // The cloud comparison is optional and expensive: decoding it alongside the
-  // local rig can exceed Chromium's renderer memory before the first frame.
-  // Load it only if the user explicitly switches the comparison selector.
   const [baseLocal,eyeAssets,seamAssets]=await Promise.all([load(LOC,localPrefix),loadEyeAssets(localPrefix),loadSeamAssets(localPrefix)]);
   let local=eyeAssets?baseLocal.flatMap(layer=>{
     if(layer.name==='eyewhite')return eyeAssets.layers.filter(x=>x.name.startsWith('eyewhite_'));
@@ -175,7 +163,7 @@ try{
     local.splice(insertAt<0?local.length:insertAt,0,...eyeLayers);
   }
   for(const {name} of local)if(!evaluate()[name.replace(/_(left|right)$/,'')])throw new Error('圖層尚未配對：'+name);
-  $('status').textContent=`已載入：雲端 ${REF.length} 層（需要時載入）／本機 ${local.length} 層\n${eyeAssets?.closedEyelids?'同步雙眼、眼白裁切與左右閉眼眼瞼已啟用':eyeAssets?'同步雙眼與眼白裁切已啟用':'未找到左右眼素材，使用合併眼部圖層'}\n第六階段 · 品質檢查中`;
+  $('status').textContent=`已載入 ERIS 單人展示 · 本機 ${local.length} 層\n${eyeAssets?.closedEyelids?'同步雙眼、眼白裁切與左右閉眼眼瞼已啟用':eyeAssets?'同步雙眼與眼白裁切已啟用':'未找到左右眼素材，使用合併眼部圖層'}\n第六階段 · 品質檢查中`;
   if(eyeAssets?.candidate)$('status').textContent+='\n候選預覽：'+eyeAssets.candidate+'（半閉眼重影待修正，尚未核准）';
   if(eyeAssets?.closedEyelids)$('status').textContent='已載入：新版眼瞼、同步雙眼與眼白裁切 · 已經使用者核准\n自動眨眼與其他動作可正常使用';
   if(seamCandidate)$('status').textContent+='\n肩頸接縫候選：'+seamCandidate+'（待人工驗收）';
@@ -271,16 +259,15 @@ try{
     // Keep the original open eyes until a rendered blink has passed review.
     // Alpha-overlap tests alone cannot certify the artwork or its alignment.
     if(!expression.hasClosedEyelids)expression.blink=0;
-    const dpr=canvas.width/innerWidth,panel=(document.querySelector('#sidePanel')||document.querySelector('aside')).getBoundingClientRect();
-    const w=canvas.width-(innerWidth>900?(panel.width+24)*dpr:0),h=canvas.height-(innerWidth<=900?(panel.height+24)*dpr:0);
-    const zoom=$('view').value==='upper'?1.9:1,s=Math.min(w/2,h)*.96/2.12*zoom;
+    const dpr=canvas.width/innerWidth,panelEl=document.querySelector('#sidePanel')||document.querySelector('aside'),panel=panelEl.getBoundingClientRect(),panelOpen=!panelEl.classList.contains('side-panel')||panelEl.classList.contains('open');
+    const w=canvas.width-(innerWidth>900&&panelOpen?(panel.width+24)*dpr:0);
+    const h=canvas.height-(innerWidth<=900&&panelOpen?(panel.height+24)*dpr:0);
+    const zoom=$('view').value==='upper'?1.9:1,s=Math.min(w,h)*.96/2.12*zoom;
     const cy=h/2+($('view').value==='upper'?s*.4:0);
-    layout={cx:w*.75,cy,s,dpr,w};
-    document.querySelector('header').style.right=innerWidth>900?(panel.width+24)+'px':'12px';
+    layout={cx:w*.5,cy,s,dpr,w};
+    document.querySelector('header').style.right=innerWidth>900&&panelOpen?(panel.width+24)+'px':'12px';
     renderer.clear();
-    const leftLayers=$('compare').value==='cloud'&&cloud?cloud:local;
-    renderer.draw(leftLayers,matrices,rig.deformation,w/4,cy,s,$('compare').value==='cloud'&&Boolean(cloud),expression,layerVis);
-    renderer.draw(local,matrices,rig.deformation,w*.75,cy,s,true,expression,layerVis);
+    renderer.draw(local,matrices,rig.deformation,layout.cx,cy,s,true,expression,layerVis);
     g.clearRect(0,0,guides.width,guides.height);
     if($('show-guides').checked){
       g.font=`${12*dpr}px system-ui`;g.lineWidth=dpr;
