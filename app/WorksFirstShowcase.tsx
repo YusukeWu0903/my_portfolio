@@ -148,7 +148,7 @@ export default function WorksFirstShowcase({ projects }: Props) {
                     <div className="flex min-h-52 flex-col p-5">
                       <h2 className="text-xl font-black leading-snug text-black">{project.title}</h2>
                       <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-neutral-700">{project.description}</p>
-                      <a href={project.link} target="_blank" rel="noopener noreferrer" tabIndex={index >= currentIndex && index < currentIndex + visibleCount ? 0 : -1} className="mt-auto inline-flex w-fit items-center gap-2 border-b-2 border-black pt-4 text-sm font-black text-black hover:text-[#5A35B5]">
+                      <a href={`/open/${project.id}`} target="_blank" rel="noopener noreferrer" tabIndex={index >= currentIndex && index < currentIndex + visibleCount ? 0 : -1} className="mt-auto inline-flex w-fit items-center gap-2 border-b-2 border-black pt-4 text-sm font-black text-black hover:text-[#5A35B5]">
                         查看作品 <ArrowUpRight className="h-4 w-4" />
                       </a>
                     </div>

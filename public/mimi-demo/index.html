@@ -8,7 +8,12 @@
 [hidden]{display:none!important}
 header{padding:12px 18px;border-bottom:1px solid #50545b}header strong{color:#ffd27e}header small{color:#b9c2cd}header a{color:#a9e8ff;margin-left:12px}
 main{display:grid;grid-template-columns:minmax(300px,1fr) 350px;height:calc(100dvh - 53px);min-height:0}
-.stage{overflow:auto;background:#282c33;padding:12px;min-width:0;min-height:0}
+.stage{position:relative;overflow:auto;background:#282c33;padding:12px;min-width:0;min-height:0}
+.loading-overlay{position:absolute;inset:12px;z-index:3;display:grid;place-items:center;background:#171a20ef;color:#eee;text-align:center}
+.loading-overlay[hidden]{display:none}
+.loading-overlay p{margin:12px 0 0;font-weight:700}
+.loading-spinner{width:34px;height:34px;margin:auto;border:3px solid #ffffff35;border-top-color:#a9e8ff;border-radius:50%;animation:loading-spin .8s linear infinite}
+@keyframes loading-spin{to{transform:rotate(360deg)}}
 canvas{display:block;width:100%;height:auto;max-width:none;margin:0 auto;background-color:#343840;background-image:linear-gradient(45deg,#3c424a 25%,transparent 25%),linear-gradient(-45deg,#3c424a 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#3c424a 75%),linear-gradient(-45deg,transparent 75%,#3c424a 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0;box-shadow:0 5px 24px #0009}
 aside{overflow:auto;padding:0;background:#15181d;border-left:1px solid #50545b}
 .tabs{display:flex;position:sticky;top:0;z-index:2;background:#101319;border-bottom:1px solid #50545b}
@@ -27,7 +32,7 @@ select,input[type=file]{max-width:100%;background:#343b45;color:#eee;border:1px 
 </style>
 <header><strong id="candidate-title">Mimi · v95 階段展示</strong> <small>原生 1280 · 身體、肩膀、裙襬與髮梢動態 · 眨眼／嘟嘴</small><a id="latest" hidden>開啟新版動態</a></header>
 <main>
-  <section class="stage"><canvas id="stage" width="1280" height="1280" aria-label="Miffy 動態預覽"></canvas></section>
+  <section class="stage"><div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite"><div><div class="loading-spinner" aria-hidden="true"></div><p>角色作品載入中…</p></div></div><canvas id="stage" width="1280" height="1280" aria-label="Miffy 動態預覽"></canvas></section>
   <aside>
     <nav class="tabs" aria-label="角色面板">
       <button class="tab active" data-tab="motion">動態控制</button>
@@ -124,6 +129,15 @@ window.addEventListener('error',event=>{
     detail.textContent=event.message||'請重新開啟預覽連結';
   }
 });
+const loadingOverlay=document.getElementById('loading-overlay');
+const statusNode=document.getElementById('status');
+const statusObserver=new MutationObserver(()=>{
+  if(statusNode?.textContent?.trim()&&!statusNode.textContent.trim().startsWith('載入中')){
+    loadingOverlay.hidden=true;
+    statusObserver.disconnect();
+  }
+});
+if(statusNode)statusObserver.observe(statusNode,{childList:true,subtree:true,characterData:true});
 setTimeout(()=>{
   const status=document.getElementById('status');
   if(status?.textContent==='載入中……'){

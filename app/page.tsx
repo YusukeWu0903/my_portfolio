@@ -433,7 +433,7 @@ export default function Home() {
                                             </div>
 
                       <a
-                        href={project.link}
+                        href={`/open/${project.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full py-3 bg-black text-white font-black rounded-xl border-2 border-black shadow-[3px_3px_0px_rgba(255,255,255,0.8)] hover:bg-[#FFE500] hover:text-black transition-all text-center flex items-center justify-center gap-2"
@@ -586,7 +586,7 @@ export default function Home() {
 
                       <div className="relative z-10 pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
                         <a
-                          href={project.link}
+                          href={`/open/${project.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 text-sm font-bold transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,240,255,0.3)] group/btn"
@@ -709,7 +709,7 @@ export default function Home() {
 
                       <div className="pt-6 border-t border-white/10 flex items-center justify-between">
                         <a
-                          href={project.link}
+                          href={`/open/${project.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 text-sm font-mono tracking-wider text-amber-300 hover:text-amber-200 transition-colors group/link"

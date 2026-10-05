@@ -17,6 +17,11 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:#15181d;color:var(--text);font:14px system-ui}
+.loading-overlay{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#101319f2;color:#eee;text-align:center}
+.loading-overlay[hidden]{display:none}
+.loading-overlay p{margin:12px 0 0;font-weight:700}
+.loading-spinner{width:36px;height:36px;margin:auto;border:3px solid #ffffff35;border-top-color:var(--accent);border-radius:50%;animation:loading-spin .8s linear infinite}
+@keyframes loading-spin{to{transform:rotate(360deg)}}
 canvas{position:fixed;inset:0;width:100%;height:100%}
 header{position:fixed;top:12px;left:12px;right:calc(var(--panel-w) + 12px);display:flex;justify-content:center;pointer-events:none;z-index:10}
 header span{background:#000a;padding:7px;border-radius:8px;font-size:12px}
@@ -99,6 +104,7 @@ h1 small{font-size:11px;color:var(--muted);font-weight:400}
 
 <canvas id="stage"></canvas>
 <canvas id="guides" style="pointer-events:none"></canvas>
+<div id="loading-overlay" class="loading-overlay" role="status" aria-live="polite"><div><div class="loading-spinner" aria-hidden="true"></div><p>角色作品載入中…</p></div></div>
 
 <header><span>Eris · 單人展示</span></header>
 
@@ -182,6 +188,24 @@ h1 small{font-size:11px;color:var(--muted);font-weight:400}
     <polyline points="15 18 9 12 15 6"></polyline>
   </svg>
 </button>
+
+<script>
+const loadingOverlay=document.getElementById('loading-overlay');
+const statusNode=document.getElementById('status');
+const statusObserver=new MutationObserver(()=>{
+  if(statusNode?.textContent?.trim()&&!statusNode.textContent.trim().startsWith('載入中')){
+    loadingOverlay.hidden=true;
+    statusObserver.disconnect();
+  }
+});
+if(statusNode)statusObserver.observe(statusNode,{childList:true,subtree:true,characterData:true});
+setTimeout(()=>{
+  if(statusNode?.textContent?.trim().startsWith('載入中')){
+    statusNode.textContent='預覽載入逾時，請重新整理頁面。';
+    loadingOverlay.hidden=true;
+  }
+},20000);
+</script>
 
 <script type="module" src="/eris-demo/viewer-assets/deform-preview.mjs?v=32-single-view"></script>
 </html>
