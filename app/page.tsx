@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WorksFirstShowcase from './WorksFirstShowcase';
+import CityShowcase from './CityShowcase';
 import { projects, type PortfolioProject } from './data/projects';
 import { 
   Gamepad2, 
@@ -18,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const [layoutMode, setLayoutMode] = useState<'showcase' | 'retro' | 'cyberpunk' | 'editorial'>('showcase');
+  const [layoutMode, setLayoutMode] = useState<'city' | 'showcase' | 'retro' | 'cyberpunk' | 'editorial'>('city');
   const [activeTab, setActiveTab] = useState<'all' | 'games' | 'tools' | 'art'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [shuffledProjects, setShuffledProjects] = useState<PortfolioProject[]>([]);
@@ -59,6 +60,8 @@ export default function Home() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (layoutMode === 'city') return <CityShowcase projects={projects} onSwitch={setLayoutMode} />;
 
   return (
     <div className={`min-h-screen transition-colors duration-700 relative overflow-hidden font-sans ${
@@ -168,6 +171,7 @@ export default function Home() {
                   }`}
                 >
                   <div className="p-2 space-y-1">
+                    <button type="button" onClick={() => { setLayoutMode('city'); setDropdownOpen(false); }} className="w-full text-left px-4 py-3 rounded-xl text-xs font-mono text-emerald-700 bg-emerald-50 hover:bg-emerald-100">🗺️ 作品街區 (互動地圖)</button>
                     <button
                       onClick={() => { setLayoutMode('showcase'); setDropdownOpen(false); }}
                       className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-mono flex items-center justify-between transition-colors font-bold ${

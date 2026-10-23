@@ -127,7 +127,7 @@ export const projects: PortfolioProject[] = [
     description: '以語義 RGBA 圖層、WebGL 變形與受限視線／眨眼系統打造的即時 2D 角色展示。支援呼吸、髮絲、姿勢、視線與核准的肩頸修補。',
     tags: ['WebGL', 'RGBA Layers', 'Interactive Rig'],
     link: '/eris-demo/',
-    image: '/project-previews/eris.png',
+    image: '/project-previews/eris-20261005.png',
     imageAlt: 'Eris 角色在互動展示中的完整站姿',
     imageFit: 'contain',
     badge: 'AI Art Rig',
