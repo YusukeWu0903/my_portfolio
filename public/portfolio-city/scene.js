@@ -151,6 +151,8 @@ function mount(projects) {
     const id = object?.userData.projectId || null;
     renderer.domElement.style.cursor = id ? 'pointer' : 'default';
     if ((id && id !== hovered) || click) { highlight(id); send({ type: 'portfolio-city:select', id }); }
+    // Open synchronously in the trusted click; a parent postMessage can lose popup activation.
+    if (click && id) window.open(`/open/${encodeURIComponent(id)}`, '_blank', 'noopener,noreferrer');
     hovered = id;
   }
   renderer.domElement.addEventListener('pointermove', event => { if (event.pointerType === 'mouse') pick(event); });

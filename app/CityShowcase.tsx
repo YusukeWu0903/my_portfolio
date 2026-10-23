@@ -55,7 +55,7 @@ export default function CityShowcase({ projects, onSwitch }: { projects: Portfol
       const anchor = anchors.find(a => a.id === id);
       if (anchor && scroller.current) scroller.current.scrollTo({ left: anchor.x * scroller.current.scrollWidth / 100 - scroller.current.clientWidth / 2, behavior: 'smooth' });
     }
-    if (window.innerWidth < 760) requestAnimationFrame(() => card.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    if (fromList && window.innerWidth < 760) requestAnimationFrame(() => card.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
   };
   const dismiss = () => {
     setSelected(null);
@@ -73,7 +73,7 @@ export default function CityShowcase({ projects, onSwitch }: { projects: Portfol
         </div>
       </header>
       <section id="projects" aria-label="互動作品街區" className={styles.section}>
-        <div className={styles.intro}><div><p className={styles.eyebrow}>A NEIGHBORHOOD OF IDEAS</p><h1>在街角，遇見作品<span>。</span></h1><p>遊戲、工具與 AI 美術。每一棟地標，都有一個故事。</p></div><span className={styles.mapHint}><MapPin size={15} /> {projects.length} 個作品地標 <i /> 移入建築探索</span></div>
+        <div className={styles.intro}><div><p className={styles.eyebrow}>A NEIGHBORHOOD OF IDEAS</p><h1>在街角，遇見作品<span>。</span></h1><p>遊戲、工具與 AI 美術。每一棟地標，都有一個故事。</p></div><span className={styles.mapHint}><MapPin size={15} /> {projects.length} 個作品地標 <i /> 移入預覽 · 點擊開啟</span></div>
         <div className={styles.mapShell} onKeyDown={event => { if (event.key === 'Escape') dismiss(); }}>
           <div className={styles.mapTop}><span><span className={styles.liveDot} /> YUSUKE CREATIVE DISTRICT</span><span>遊戲 <i className={styles.gameDot} /> 工具 <i className={styles.toolDot} /> 美術 <i className={styles.artDot} /></span></div>
           <div className={styles.mapScroll} ref={scroller}>
@@ -81,7 +81,7 @@ export default function CityShowcase({ projects, onSwitch }: { projects: Portfol
               <iframe ref={frame} title="作品街區 3D 地圖" src="/portfolio-city/index.html" className={styles.frame} tabIndex={-1} />
               {ready && anchors.map(anchor => {
                 const project = projects.find(p => p.id === anchor.id);
-                return project ? <button key={project.id} type="button" className={`${styles.label} ${selected === project.id ? styles.labelActive : ''}`} style={{ left: `${anchor.x}%`, top: `${anchor.y}%`, '--accent': project.category === 'games' ? '#c89b3a' : project.category === 'tools' ? '#378f8f' : '#ac79ab' } as React.CSSProperties} onPointerEnter={event => { if (event.pointerType === 'mouse') choose(project.id); }} onFocus={() => choose(project.id)} onClick={() => choose(project.id)} aria-pressed={selected === project.id} aria-controls="city-project-card"><span />{names[project.id] || project.title}<ArrowUpRight size={11} /></button> : null;
+                return project ? <a key={project.id} href={`/open/${project.id}`} target="_blank" rel="noopener noreferrer" className={`${styles.label} ${selected === project.id ? styles.labelActive : ''}`} style={{ left: `${anchor.x}%`, top: `${anchor.y}%`, '--accent': project.category === 'games' ? '#c89b3a' : project.category === 'tools' ? '#378f8f' : '#ac79ab' } as React.CSSProperties} onPointerEnter={event => { if (event.pointerType === 'mouse') choose(project.id); }} onFocus={() => choose(project.id)} aria-controls="city-project-card"><span />{names[project.id] || project.title}<ArrowUpRight size={11} /></a> : null;
               })}
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function CityShowcase({ projects, onSwitch }: { projects: Portfol
             <div className={styles.cardImage}><Image src={active.image} alt={active.imageAlt} fill sizes="(max-width: 760px) 90vw, 340px" className={active.imageFit === 'contain' ? styles.contain : styles.cover} style={{ objectPosition: active.imagePosition === 'left' ? 'left' : 'center' }} /><span className={styles.category}>{categories[active.category]}</span><button type="button" className={styles.close} aria-label="關閉作品卡片" onClick={dismiss}><X size={16} /></button></div>
             <div className={styles.cardBody}><p className={styles.cardKicker}>PROJECT / {String(projects.indexOf(active) + 1).padStart(2, '0')}</p><h2>{active.title}</h2><p>{active.description}</p><div className={styles.tags}>{active.tags.slice(0, 3).map(tag => <span key={tag}>{tag}</span>)}</div><a href={`/open/${active.id}`} target="_blank" rel="noopener noreferrer">查看作品 <ArrowUpRight size={17} /></a></div>
           </article>}
-          <div className={styles.mapBottom}><span>沿著街道，探索每一個想法。</span><span>滑鼠移入／點選地標 <span className={styles.mobileHint}> · 左右滑動地圖</span></span></div>
+          <div className={styles.mapBottom}><span>沿著街道，探索每一個想法。</span><span>移入預覽 · 點擊建築或標籤開啟作品 <span className={styles.mobileHint}> · 左右滑動地圖</span></span></div>
         </div>
         <nav className={styles.projectList} aria-label="所有作品入口"><span className={styles.listTitle}>街區索引 <span>{projects.length}</span></span>{projects.map(project => <button key={project.id} type="button" aria-pressed={selected === project.id} className={selected === project.id ? styles.indexActive : ''} onClick={() => choose(project.id, true)}>{names[project.id] || project.title}<ArrowUpRight size={12} /></button>)}</nav>
       </section>
