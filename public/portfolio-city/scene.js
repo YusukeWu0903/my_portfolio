@@ -19,12 +19,12 @@ window.addEventListener('message', event => {
   if (event.source !== parent || event.origin !== location.origin) return;
   if (event.data?.type === 'portfolio-city:init' && !mounted && Array.isArray(event.data.projects)) {
     mounted = true;
-    try { mount(event.data.projects); } catch (error) { console.error(error); send({ type: 'portfolio-city:error' }); }
+    try { mount(event.data.projects, event.data.district); } catch (error) { console.error(error); send({ type: 'portfolio-city:error' }); }
   }
 });
 send({ type: 'portfolio-city:ready' });
 
-function mount(projects) {
+function mount(projects, initialDistrict = 'works') {
   const scene = new T.Scene();
   scene.background = new T.Color('#abc8c2');
   const renderer = new T.WebGLRenderer({ antialias: true, powerPreference: 'low-power' });
@@ -76,10 +76,10 @@ function mount(projects) {
     for (const x of [-62, -31, 0, 31, 62]) for (const s of [-1, 1]) for (let n = 0; n < 4; n++) box(x - 1.8 + n * 1.15, .95, z + s * 4.8, .6, .035, 2.1, '#eee8d2');
   }
   const leafGeo = new T.IcosahedronGeometry(1, 1);
-  function tree(x, z, scale = 1) {
-    box(x, 2, z, .5, 3, .5, '#96886c');
+  function tree(x, z, scale = 1, group = scene) {
+    box(x, 2, z, .5, 3, .5, '#96886c', group);
     const crown = new T.Mesh(leafGeo, material('#699777'));
-    crown.position.set(x, 4.4 * scale, z); crown.scale.set(1.8 * scale, 2.1 * scale, 1.8 * scale); crown.castShadow = true; scene.add(crown);
+    crown.position.set(x, 4.4 * scale, z); crown.scale.set(1.8 * scale, 2.1 * scale, 1.8 * scale); crown.castShadow = true; group.add(crown);
   }
   for (let x = -77; x <= 77; x += 10) for (const z of [-extentZ + 4, extentZ - 4]) tree(x, z, .8);
   for (const x of [-76, 76]) for (let z = -extentZ + 13; z < extentZ - 9; z += 10) tree(x, z, .8);
@@ -108,12 +108,13 @@ function mount(projects) {
     neighborhoodBuilding(x, z - 5, row + 4, true); tree(x, z + 8, .8);
   }
   const landmarks = [];
+  const landmarkLayer = new T.Group(); scene.add(landmarkLayer);
   projects.forEach((project, index) => {
     const col = index % 4, row = Math.floor(index / 4);
     const x = -46.5 + col * 31, z = row * 42 - centerZ;
     const color = project.category === 'games' ? '#d2b16f' : project.category === 'tools' ? '#70a8a0' : '#c39ab4';
-    box(x, 1, z, 24, .8, 31, '#ebe4cf');
-    box(x, 1.45, z + 13.5, 22, .12, 2.5, color);
+    box(x, 1, z, 24, .8, 31, '#ebe4cf', landmarkLayer);
+    box(x, 1.45, z + 13.5, 22, .12, 2.5, color, landmarkLayer);
     const [kind, designKey] = catalogue[project.id] || (project.category === 'art' ? ['boutique', 'baoer-boutique'] : project.category === 'games' ? ['cinema', 'star-cinema'] : ['studio', 'feida-sawtooth']);
     const profile = { id: `CityDesign${String(index + 1).padStart(4, '0')}`, kind, designKey, wallHex: '#e5ddc4', glassHex: '#7aafb7', accentHex: color };
     const group = namedBuilding(profile, 21, 25, 'physical', .5);
@@ -122,12 +123,38 @@ function mount(projects) {
     group.scale.multiplyScalar(fit);
     group.position.set(x, 1.5 - bounds.min.y * fit, z);
     group.userData.projectId = project.id;
-    scene.add(group);
-    const highlight = box(x, 1.39, z, 24.6, .08, 31.6, color);
+    landmarkLayer.add(group);
+    const highlight = box(x, 1.39, z, 24.6, .08, 31.6, color, landmarkLayer);
     highlight.visible = false;
     landmarks.push({ id: project.id, group, x, z, highlight, effect: group.userData.heroEffect || group.userData.pianoEffect });
-    for (const s of [-1, 1]) { tree(x + s * 10, z + 11, .65); box(x + s * 8, 1.75, z + 14, 2.3, .6, .8, '#9a9d78'); }
+    for (const s of [-1, 1]) { tree(x + s * 10, z + 11, .65, landmarkLayer); box(x + s * 8, 1.75, z + 14, 2.3, .6, .8, '#9a9d78', landmarkLayer); }
   });
+  // A separate reserved district: one planted notice board inside a fenced open lot.
+  const construction = new T.Group(); construction.name = 'expansion-district'; scene.add(construction);
+  box(0, 1.15, 0, 117, .9, rows * 42 - 9, '#cbbb9a', construction);
+  const fenceZ = rows * 21 - 4;
+  for (const z of [-fenceZ, fenceZ]) {
+    for (const y of [2.4, 3.6]) box(0, y, z, 118, .3, .35, '#978c71', construction);
+    for (let x = -59; x <= 59; x += 11.8) box(x, 2.5, z, .5, 3.2, .5, '#8b816b', construction);
+  }
+  for (const x of [-59, 59]) {
+    for (const y of [2.4, 3.6]) box(x, y, 0, .35, .3, fenceZ * 2, '#978c71', construction);
+    for (let z = -fenceZ; z <= fenceZ; z += 10) box(x, 2.5, z, .5, 3.2, .5, '#8b816b', construction);
+  }
+  const notice = new T.Group(); notice.position.z = 6; notice.rotation.y = Math.atan2(camera.position.x, camera.position.z); construction.add(notice);
+  box(0, 8, 0, 1.4, 15, 1.4, '#8b7252', notice);
+  box(0, 1.9, 0, 4.5, .8, 4.5, '#a69676', notice);
+  const board = new T.Group(); board.position.y = 23; board.rotation.x = -.12; notice.add(board);
+  box(0, 0, 0, 43, 20, 1.1, '#8b7252', board);
+  const lettering = document.createElement('canvas'); lettering.width = 1280; lettering.height = 576;
+  const ink = lettering.getContext('2d');
+  ink.fillStyle = '#fbf1d8'; ink.fillRect(0, 0, 1280, 576);
+  ink.strokeStyle = '#d3bb86'; ink.lineWidth = 5; ink.strokeRect(23, 23, 1234, 530);
+  ink.textAlign = 'center'; ink.fillStyle = '#9a8258'; ink.font = '26px Arial, sans-serif'; ink.fillText('THE NEXT NEIGHBORHOOD', 640, 125);
+  ink.fillStyle = '#35574b'; ink.font = 'bold 140px "Microsoft JhengHei", sans-serif'; ink.fillText('擴建中…', 640, 320);
+  ink.fillStyle = '#8b816b'; ink.font = '32px "Microsoft JhengHei", sans-serif'; ink.fillText('新的作品，將在這裡發生。', 640, 425);
+  const letteringMap = new T.CanvasTexture(lettering); letteringMap.colorSpace = T.SRGBColorSpace;
+  const face = new T.Mesh(new T.PlaneGeometry(41.6, 18.6), new T.MeshBasicMaterial({ map: letteringMap })); face.position.z = .57; board.add(face);
   // Lightweight traffic follows the central street; no orbit/drag controls disturb labels.
   const cars = [];
   for (let i = 0; i < 7; i++) {
@@ -137,11 +164,26 @@ function mount(projects) {
     g.position.set(i % 2 ? 1.7 : -1.7, 0, 0); scene.add(g); cars.push(g);
   }
   let selected = null;
-  const highlight = id => { selected = id; for (const item of landmarks) item.highlight.visible = item.id === id; };
-  window.addEventListener('message', event => { if (event.source === parent && event.origin === location.origin && event.data?.type === 'portfolio-city:highlight') highlight(event.data.id); });
-  const ray = new T.Raycaster(), pointer = new T.Vector2();
   let hovered = null;
+  let activeDistrict = 'works';
+  const highlight = id => { selected = id; for (const item of landmarks) item.highlight.visible = item.id === id; };
+  const setDistrict = district => {
+    activeDistrict = district === 'expansion' ? 'expansion' : 'works';
+    landmarkLayer.visible = activeDistrict === 'works'; construction.visible = !landmarkLayer.visible;
+    for (const car of cars) car.visible = landmarkLayer.visible;
+    hovered = null; highlight(null); renderer.domElement.style.cursor = 'default';
+    renderer.domElement.setAttribute('role', 'img');
+    renderer.domElement.setAttribute('aria-label', activeDistrict === 'works' ? '作品街區，含作品地標與背景建築' : '擴建預定地，中央告示牌寫著擴建中…');
+  };
+  window.addEventListener('message', event => {
+    if (event.source !== parent || event.origin !== location.origin) return;
+    if (event.data?.type === 'portfolio-city:highlight') highlight(event.data.id);
+    if (event.data?.type === 'portfolio-city:district') setDistrict(event.data.district);
+  });
+  setDistrict(initialDistrict);
+  const ray = new T.Raycaster(), pointer = new T.Vector2();
   function pick(event, click = false) {
+    if (activeDistrict !== 'works') return;
     const rect = renderer.domElement.getBoundingClientRect();
     pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     ray.setFromCamera(pointer, camera);
