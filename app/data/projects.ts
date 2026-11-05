@@ -1,9 +1,12 @@
 export type ProjectCategory = 'games' | 'tools' | 'art';
+export type CityDistrict = 'works' | 'expansion';
 
 export type PortfolioProject = {
   id: string;
   title: string;
   category: ProjectCategory;
+  cityDistrict?: CityDistrict;
+  citySlot?: number;
   description: string;
   tags: string[];
   link: string;
@@ -17,6 +20,9 @@ export type PortfolioProject = {
   retroColor: string;
 };
 
+export const getCityDistrict = (project: PortfolioProject): CityDistrict => project.cityDistrict ?? 'works';
+
+// cityDistrict selects the street; citySlot optionally preserves a specific parcel.
 // Add a project here with its preview image in public/project-previews/.
 // Every layout and the works-first carousel use this same list.
 export const projects: PortfolioProject[] = [
@@ -64,18 +70,20 @@ export const projects: PortfolioProject[] = [
     retroColor: 'text-black',
   },
   {
-    id: 'water-sort',
-    title: 'AI 製作倒水遊戲',
+    id: 'fruit-slot',
+    title: '復古水果盤 · Unity 6',
     category: 'games',
-    description: '結合 Gemini 與自動化驗證的益智倒水遊戲，支援多層次關卡編輯器與防死鎖演算法。',
-    tags: ['Next.js', 'React', 'Puzzle'],
-    link: 'https://water-sort-local.vercel.app/',
-    image: '/project-previews/water-sort-game.png',
-    imageAlt: '倒水遊戲的彩色水柱與關卡選擇介面',
-    badge: 'Casual',
+    citySlot: 3,
+    description: '從 Cocos2d 移植至 Unity 的四排水果盤互動展示，包含 40 條支付線、Wild 判賞、緩衝停輪與復古機台介面。',
+    tags: ['Unity 6', 'C#', 'WebGL'],
+    link: 'https://unity-fruit-slot.vercel.app/',
+    image: '/project-previews/fruit-slot-20261105.png',
+    imageAlt: 'Unity 6 復古水果盤正式站的紫金機台、四排水果與支付線',
+    imageFit: 'contain',
+    badge: 'Unity 6 · WebGL',
     span: 'col-span-1 md:col-span-1 lg:col-span-1',
-    retroBg: 'bg-[#00F0FF]',
-    retroColor: 'text-black',
+    retroBg: 'bg-[#7C3AED]',
+    retroColor: 'text-white',
   },
   {
     id: 'material-library',
@@ -135,5 +143,21 @@ export const projects: PortfolioProject[] = [
     span: 'col-span-1 md:col-span-2 lg:col-span-2 row-span-2',
     retroBg: 'bg-[#9D4EDD]',
     retroColor: 'text-white',
+  },
+  {
+    id: 'water-sort',
+    title: 'AI 製作倒水遊戲',
+    category: 'games',
+    cityDistrict: 'expansion',
+    citySlot: 3,
+    description: '結合 Gemini 與自動化驗證的益智倒水遊戲，支援多層次關卡編輯器與防死鎖演算法。',
+    tags: ['Next.js', 'React', 'Puzzle'],
+    link: 'https://water-sort-local.vercel.app/',
+    image: '/project-previews/water-sort-game.png',
+    imageAlt: '倒水遊戲的彩色水柱與關卡選擇介面',
+    badge: 'Casual',
+    span: 'col-span-1 md:col-span-1 lg:col-span-1',
+    retroBg: 'bg-[#00F0FF]',
+    retroColor: 'text-black',
   },
 ];

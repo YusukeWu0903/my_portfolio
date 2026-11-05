@@ -12,6 +12,7 @@ const catalogue = {
   miffy: ['boutique', 'baoer-boutique'],
   mimi: ['wellness', 'goddess-center'],
   eris: ['agency', 'davinci-wings'],
+  'fruit-slot': ['restaurant', 'music-dining'],
   'water-sort': ['restaurant', 'music-dining'],
 };
 let mounted = false;
@@ -55,7 +56,20 @@ function mount(projects, initialDistrict = 'works') {
     const o = new T.Mesh(geometry, material(color));
     o.position.set(x, y, z); o.scale.set(w, h, d); o.castShadow = h > 1; o.receiveShadow = true; group.add(o); return o;
   }
-  const rows = Math.max(2, Math.ceil(projects.length / 4));
+  const districtIds = ['works', 'expansion'];
+  const placements = [];
+  for (const district of districtIds) {
+    const entries = projects.filter(p => (p.cityDistrict || 'works') === district);
+    const reserved = new Set(entries.filter(p => Number.isInteger(p.citySlot) && p.citySlot >= 0).map(p => p.citySlot));
+    const used = new Set();
+    for (const project of entries) {
+      const explicit = Number.isInteger(project.citySlot) && project.citySlot >= 0;
+      let slot = explicit ? project.citySlot : 0;
+      while (used.has(slot) || (!explicit && reserved.has(slot))) slot++;
+      used.add(slot); placements.push({ ...project, district, slot });
+    }
+  }
+  const rows = Math.max(2, Math.ceil(Math.max(8, ...placements.map(p => p.slot + 1)) / 4));
   const extentZ = rows * 21 + 36;
   const centerZ = (rows - 1) * 21;
   box(0, -3, 0, 178, 5, extentZ * 2 + 5, '#7ea59c');
@@ -84,19 +98,19 @@ function mount(projects, initialDistrict = 'works') {
   for (let x = -77; x <= 77; x += 10) for (const z of [-extentZ + 4, extentZ - 4]) tree(x, z, .8);
   for (const x of [-76, 76]) for (let z = -extentZ + 13; z < extentZ - 9; z += 10) tree(x, z, .8);
   const background = new T.Group(); scene.add(background);
-  function neighborhoodBuilding(x, z, index, front = false) {
+  function neighborhoodBuilding(x, z, index, front = false, group = background) {
     const height = front ? 6 + index % 3 * 2 : 11 + index % 5 * 3;
     const w = 8 + index % 3, d = 9;
     const colors = ['#c3c8b5', '#d8cbb0', '#adbfb9', '#d3d3bd', '#b8c9c0'];
-    box(x, 1 + height / 2, z, w, height, d, colors[index % colors.length], background);
-    box(x, height + 1.4, z, w + .7, .6, d + .7, '#e7dfc7', background);
-    box(x - w * .2, height + 2, z, w * .35, 1, d * .4, '#98aaa2', background);
+    box(x, 1 + height / 2, z, w, height, d, colors[index % colors.length], group);
+    box(x, height + 1.4, z, w + .7, .6, d + .7, '#e7dfc7', group);
+    box(x - w * .2, height + 2, z, w * .35, 1, d * .4, '#98aaa2', group);
     for (let y = 3; y < height; y += 2.4) {
-      box(x, y, z + d / 2 + .03, w * .78, 1.3, .05, '#729a9d', background);
-      box(x + w / 2 + .03, y, z, .05, 1.3, d * .78, '#729a9d', background);
-      box(x, y + .75, z + d / 2 + .1, w + .2, .16, .3, '#e5dcc4', background);
+      box(x, y, z + d / 2 + .03, w * .78, 1.3, .05, '#729a9d', group);
+      box(x + w / 2 + .03, y, z, .05, 1.3, d * .78, '#729a9d', group);
+      box(x, y + .75, z + d / 2 + .1, w + .2, .16, .3, '#e5dcc4', group);
     }
-    box(x, 2, z + d / 2 + .12, 1.5, 2, .14, '#607f7b', background);
+    box(x, 2, z + d / 2 + .12, 1.5, 2, .14, '#607f7b', group);
   }
   for (let i = 0; i < 11; i++) {
     neighborhoodBuilding(-64 + i * 12.7, -extentZ + 17, i);
@@ -108,8 +122,10 @@ function mount(projects, initialDistrict = 'works') {
     neighborhoodBuilding(x, z - 5, row + 4, true); tree(x, z + 8, .8);
   }
   const landmarks = [];
-  const landmarkLayer = new T.Group(); scene.add(landmarkLayer);
-  projects.forEach((project, index) => {
+  const districtLayers = Object.fromEntries(districtIds.map(id => { const group = new T.Group(); group.name = id + '-landmarks'; scene.add(group); return [id, group]; }));
+  placements.forEach(project => {
+    const index = project.slot;
+    const landmarkLayer = districtLayers[project.district];
     const col = index % 4, row = Math.floor(index / 4);
     const x = -46.5 + col * 31, z = row * 42 - centerZ;
     const color = project.category === 'games' ? '#d2b16f' : project.category === 'tools' ? '#70a8a0' : '#c39ab4';
@@ -126,9 +142,16 @@ function mount(projects, initialDistrict = 'works') {
     landmarkLayer.add(group);
     const highlight = box(x, 1.39, z, 24.6, .08, 31.6, color, landmarkLayer);
     highlight.visible = false;
-    landmarks.push({ id: project.id, group, x, z, highlight, effect: group.userData.heroEffect || group.userData.pianoEffect });
+    landmarks.push({ id: project.id, district: project.district, group, x, z, highlight, effect: group.userData.heroEffect || group.userData.pianoEffect });
     for (const s of [-1, 1]) { tree(x + s * 10, z + 11, .65, landmarkLayer); box(x + s * 8, 1.75, z + 14, 2.3, .6, .8, '#9a9d78', landmarkLayer); }
   });
+  // Empty parcels remain ordinary non-interactive neighborhood buildings.
+  for (const district of districtIds) {
+    const occupied = new Set(placements.filter(p => p.district === district).map(p => p.slot));
+    for (let slot = 0; slot < rows * 4; slot++) if (!occupied.has(slot)) {
+      neighborhoodBuilding(-46.5 + slot % 4 * 31, Math.floor(slot / 4) * 42 - centerZ, slot + 20, true, districtLayers[district]);
+    }
+  }
   // A separate reserved district: one planted notice board inside a fenced open lot.
   const construction = new T.Group(); construction.name = 'expansion-district'; scene.add(construction);
   box(0, 1.15, 0, 117, .9, rows * 42 - 9, '#cbbb9a', construction);
@@ -166,14 +189,17 @@ function mount(projects, initialDistrict = 'works') {
   let selected = null;
   let hovered = null;
   let activeDistrict = 'works';
-  const highlight = id => { selected = id; for (const item of landmarks) item.highlight.visible = item.id === id; };
+  const highlight = id => { selected = id; for (const item of landmarks) item.highlight.visible = item.district === activeDistrict && item.id === id; };
   const setDistrict = district => {
     activeDistrict = district === 'expansion' ? 'expansion' : 'works';
-    landmarkLayer.visible = activeDistrict === 'works'; construction.visible = !landmarkLayer.visible;
-    for (const car of cars) car.visible = landmarkLayer.visible;
+    for (const district of districtIds) districtLayers[district].visible = district === activeDistrict;
+    const count = landmarks.filter(item => item.district === activeDistrict).length;
+    construction.visible = count === 0;
+    for (const car of cars) car.visible = count > 0;
     hovered = null; highlight(null); renderer.domElement.style.cursor = 'default';
     renderer.domElement.setAttribute('role', 'img');
-    renderer.domElement.setAttribute('aria-label', activeDistrict === 'works' ? '作品街區，含作品地標與背景建築' : '擴建預定地，中央告示牌寫著擴建中…');
+    renderer.domElement.setAttribute('aria-label', count ? `${activeDistrict === 'works' ? '第一' : '第二'}街區，${count}個作品地標與背景建築` : '擴建預定地，中央告示牌寫著擴建中…');
+    resize();
   };
   window.addEventListener('message', event => {
     if (event.source !== parent || event.origin !== location.origin) return;
@@ -183,27 +209,27 @@ function mount(projects, initialDistrict = 'works') {
   setDistrict(initialDistrict);
   const ray = new T.Raycaster(), pointer = new T.Vector2();
   function pick(event, click = false) {
-    if (activeDistrict !== 'works') return;
+    if (!landmarks.some(item => item.district === activeDistrict)) return;
     const rect = renderer.domElement.getBoundingClientRect();
     pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     ray.setFromCamera(pointer, camera);
-    const hit = ray.intersectObjects(landmarks.map(item => item.group), true)[0];
+    const hit = ray.intersectObjects(landmarks.filter(item => item.district === activeDistrict).map(item => item.group), true)[0];
     let object = hit?.object;
     while (object && !object.userData.projectId) object = object.parent;
     const id = object?.userData.projectId || null;
     renderer.domElement.style.cursor = id ? 'pointer' : 'default';
-    if ((id && id !== hovered) || click) { highlight(id); send({ type: 'portfolio-city:select', id, clicked: click }); }
+    if ((id && id !== hovered) || click) { highlight(id); send({ type: 'portfolio-city:select', id, district: activeDistrict, clicked: click }); }
     hovered = id;
   }
   renderer.domElement.addEventListener('pointermove', event => { if (event.pointerType === 'mouse') pick(event); });
   renderer.domElement.addEventListener('click', event => pick(event, true));
-  const resize = () => {
+  function resize() {
     const w = innerWidth, h = innerHeight, height = 149 + Math.max(0, rows - 2) * 33;
     camera.left = -height * w / h / 2; camera.right = -camera.left; camera.top = height / 2; camera.bottom = -height / 2; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
     renderer.setSize(w, h);
-    const anchors = landmarks.map(item => { const p = new T.Vector3(item.x, 2, item.z + 16.2).project(camera); return { id: item.id, x: (p.x + 1) * 50, y: (-p.y + 1) * 50 }; });
+    const anchors = landmarks.filter(item => item.district === activeDistrict).map(item => { const p = new T.Vector3(item.x, 2, item.z + 16.2).project(camera); return { id: item.id, x: (p.x + 1) * 50, y: (-p.y + 1) * 50 }; });
     renderer.render(scene, camera);
-    send({ type: 'portfolio-city:anchors', anchors });
+    send({ type: 'portfolio-city:anchors', district: activeDistrict, anchors });
   };
   window.addEventListener('resize', resize); resize();
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -211,7 +237,7 @@ function mount(projects, initialDistrict = 'works') {
   renderer.setAnimationLoop(time => {
     if (document.hidden || time - last < 42) return;
     last = time;
-    for (const item of landmarks) item.effect?.setFrame(reduced.matches || item.id === selected ? 0 : time / 125, 48);
+    for (const item of landmarks) if (item.district === activeDistrict) item.effect?.setFrame(reduced.matches || item.id === selected ? 0 : time / 125, 48);
     cars.forEach((g, i) => { g.position.z = reduced.matches ? i * 13 - 42 : (time / 500 * (i % 2 ? -1 : 1) + i * 17 + 10000) % (extentZ * 2 - 20) - extentZ + 10; });
     renderer.render(scene, camera);
   });
