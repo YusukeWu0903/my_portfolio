@@ -218,11 +218,17 @@ function mount(projects, initialDistrict = 'works') {
     while (object && !object.userData.projectId) object = object.parent;
     const id = object?.userData.projectId || null;
     renderer.domElement.style.cursor = id ? 'pointer' : 'default';
+    if (id !== hovered) send({ type: 'portfolio-city:hover', id, district: activeDistrict });
     if ((id && id !== hovered) || click) { highlight(id); send({ type: 'portfolio-city:select', id, district: activeDistrict, clicked: click }); }
     hovered = id;
   }
   renderer.domElement.addEventListener('pointermove', event => { if (event.pointerType === 'mouse') pick(event); });
   renderer.domElement.addEventListener('click', event => pick(event, true));
+  renderer.domElement.addEventListener('pointerleave', () => {
+    hovered = null;
+    renderer.domElement.style.cursor = 'default';
+    send({ type: 'portfolio-city:hover', id: null, district: activeDistrict });
+  });
   function resize() {
     const w = innerWidth, h = innerHeight, height = 149 + Math.max(0, rows - 2) * 33;
     camera.left = -height * w / h / 2; camera.right = -camera.left; camera.top = height / 2; camera.bottom = -height / 2; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
