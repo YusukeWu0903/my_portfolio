@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import WorksFirstShowcase from './WorksFirstShowcase';
 import CityShowcase from './CityShowcase';
+import PortfolioDetails from './PortfolioDetails';
 import { projects, type PortfolioProject } from './data/projects';
 import { 
   Gamepad2, 
@@ -15,7 +16,6 @@ import {
   LayoutGrid,
   BookOpen,
   ChevronDown,
-  Mail,
 } from 'lucide-react';
 
 export default function Home() {
@@ -450,28 +450,6 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* Footer / Connect Section (連線) */}
-              <footer id="footer" className="bg-black text-white border-4 border-black p-12 rounded-3xl shadow-[8px_8px_0px_#FFE500] text-center space-y-6">
-                <div className="inline-block bg-[#00FF66] text-black font-black px-4 py-1.5 rounded-xl border-2 border-white text-sm">
-                  ⚡ READY TO PARTY?
-                </div>
-                <h2 className="text-3xl sm:text-5xl font-black">準備好一起組隊冒險了嗎？</h2>
-                <p className="text-neutral-400 font-bold max-w-xl mx-auto">
-                  無論是遊戲企劃、AI 系統整合還是前端工程，隨時歡迎發送組隊邀請！
-                </p>
-                <div className="pt-4 flex flex-wrap justify-center gap-4">
-                  <a
-                    href="mailto:yusuke@example.com"
-                    className="px-8 py-4 bg-[#FFE500] text-black font-black rounded-2xl border-4 border-white shadow-[4px_4px_0px_#FFF] hover:bg-[#00FF66] transition-all flex items-center gap-3 text-lg"
-                  >
-                    <Mail className="w-5 h-5" />
-                    <span>聯絡信箱 (SEND MAIL)</span>
-                  </a>
-                </div>
-                <div className="pt-8 text-xs font-mono text-neutral-500">
-                  © 2026 RETRO ARCADE PORTFOLIO. ALL RIGHTS RESERVED.
-                </div>
-              </footer>
             </motion.div>
           ) : layoutMode === 'cyberpunk' ? (
             /* ==================== CYBERPUNK LAUNCHER LAYOUT ==================== */
@@ -731,14 +709,16 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* Footer for non-retro modes */}
-        {layoutMode !== 'retro' && (
+        <PortfolioDetails dark={layoutMode === 'cyberpunk' || layoutMode === 'editorial'} />
+
+        {/* Shared footer */}
+        {(
           <motion.footer 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className={`mt-32 pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-mono transition-colors duration-500 ${
-              layoutMode === 'showcase' ? 'border-black/15 text-neutral-600' : layoutMode === 'cyberpunk' ? 'border-white/10 text-zinc-500' : 'border-white/10 text-[#78716C]'
+              layoutMode === 'showcase' || layoutMode === 'retro' ? 'border-black/15 text-neutral-600' : layoutMode === 'cyberpunk' ? 'border-white/10 text-zinc-500' : 'border-white/10 text-[#78716C]'
             }`}
           >
             <div>© 2026 CREATIVE PORTFOLIO. ALL RIGHTS RESERVED.</div>

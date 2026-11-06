@@ -2,11 +2,17 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Adding a portfolio project
 
+### Featured project stories and contact
+
+The city homepage remains the default. Fruit Slot, Mimi and PivotLens have static case studies at `/projects/fruit-slot`, `/projects/mimi` and `/projects/pivotlens`. `featured: true` and `caseStudy` in `app/data/projects.ts` connect each card to the story and the three-project section. Long-form content lives in `app/data/caseStudies.ts`; only add factual scope and evidence, and preserve prototype/stage limitations. Adding another story requires a matching project and case-study ID.
+
+`app/data/creator.ts` owns the public creator identity and GitHub URL. The shared `PortfolioDetails` component supplies featured stories and the contact section in all five layouts. No public email is configured. Live demo links still use `/open/[id]`; story links open the portfolio's own case-study page.
+
 1. Capture a screenshot of the running project and save it in `public/project-previews/`.
 2. Add one entry to `app/data/projects.ts` with a unique `id`, title, category, description, live link, and screenshot path. Keep the other fields filled in for the original layouts.
 3. Publish the site. The new project appears in all layouts automatically and joins the works-first carousel on the next page load; all projects except Water Sort are shuffled, with Water Sort kept last.
 
-The default works-first layout shows one card on phones, two on medium screens, and three on wide screens. It advances one card left every five seconds. The layout menu keeps the three original designs available.
+The works-first layout shows one card on phones, two on medium screens, and three on wide screens. It advances one card left every five seconds. The layout menu keeps all five designs available.
 
 ## Getting Started
 

@@ -5,6 +5,8 @@ export type PortfolioProject = {
   id: string;
   title: string;
   category: ProjectCategory;
+  featured?: boolean;
+  caseStudy?: string;
   cityDistrict?: CityDistrict;
   citySlot?: number;
   description: string;
@@ -57,9 +59,11 @@ export const projects: PortfolioProject[] = [
   },
   {
     id: 'pivotlens',
-    title: 'PivotLens Stock App',
+    title: 'PivotLens 台股選股分析',
     category: 'tools',
-    description: '即時股票數據分析平台，提供專業的 Pivot Lens 技術指標視覺化與自動化推導工具。',
+    featured: true,
+    caseStudy: '/projects/pivotlens',
+    description: '以均線轉折與量價雙引擎篩選台股，結合 K 線診斷、歷史訊號統計與每日資料更新的選股分析工具。',
     tags: ['Python', 'Streamlit', 'Data Analysis'],
     link: 'https://pivotlens-stock-app-jynp9vfi7zghuaums3kgrk.streamlit.app/',
     image: '/project-previews/pivotlens.png',
@@ -73,6 +77,8 @@ export const projects: PortfolioProject[] = [
     id: 'fruit-slot',
     title: '復古水果盤 · Unity 6',
     category: 'games',
+    featured: true,
+    caseStudy: '/projects/fruit-slot',
     citySlot: 3,
     description: '從 Cocos2d 移植至 Unity 的四排水果盤互動展示，包含 40 條支付線、Wild 判賞、緩衝停輪與復古機台介面。',
     tags: ['Unity 6', 'C#', 'WebGL'],
@@ -118,11 +124,13 @@ export const projects: PortfolioProject[] = [
     id: 'mimi',
     title: 'Mimi · 互動角色展示',
     category: 'art',
+    featured: true,
+    caseStudy: '/projects/mimi',
     description: '原生高解析分層角色動態，包含肩膀、裙襬與髮梢擺動；嘟嘴表情依序先閉眼、再嘟嘴。階段展示中。',
     tags: ['WebGL', 'Character Art', 'Motion Preview'],
     link: '/mimi-demo/',
-    image: '/project-previews/mimi.png',
-    imageAlt: 'Mimi 角色動態預覽與互動控制面板',
+    image: '/project-previews/mimi-v95-20261107.png',
+    imageAlt: 'Mimi v95 的完整角色動態展示與互動控制面板',
     imagePosition: 'left',
     badge: '階段展示 · v95',
     span: 'col-span-1 md:col-span-2 lg:col-span-2 row-span-2',

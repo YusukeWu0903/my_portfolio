@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import type { PortfolioProject, ProjectCategory } from './data/projects';
 
@@ -148,6 +149,7 @@ export default function WorksFirstShowcase({ projects }: Props) {
                     <div className="flex min-h-52 flex-col p-5">
                       <h2 className="text-xl font-black leading-snug text-black">{project.title}</h2>
                       <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-neutral-700">{project.description}</p>
+                      {project.caseStudy && <Link href={project.caseStudy} tabIndex={index >= currentIndex && index < currentIndex + visibleCount ? 0 : -1} className="mt-4 inline-flex items-center gap-2 text-sm font-black text-[#5A35B5] underline underline-offset-4">專案介紹 <ArrowUpRight className="h-4 w-4" /></Link>}
                       <a href={`/open/${project.id}`} target="_blank" rel="noopener noreferrer" tabIndex={index >= currentIndex && index < currentIndex + visibleCount ? 0 : -1} className="mt-auto inline-flex w-fit items-center gap-2 border-b-2 border-black pt-4 text-sm font-black text-black hover:text-[#5A35B5]">
                         查看作品 <ArrowUpRight className="h-4 w-4" />
                       </a>
