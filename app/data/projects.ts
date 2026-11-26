@@ -12,6 +12,8 @@ export type PortfolioProject = {
   description: string;
   tags: string[];
   link: string;
+  desktopDownload?: string;
+  desktopVersion?: string;
   image: string;
   imageAlt: string;
   imageFit?: 'cover' | 'contain';
@@ -35,6 +37,8 @@ export const projects: PortfolioProject[] = [
     description: '以 Godot 2D 打造的六角戰棋：四職業編隊、裝備與寶箱、分段劇情及回合回溯。從開場佈陣、取寶全滅到戰後結算，支援大型地圖生成與編輯。',
     tags: ['Godot 4', 'GDScript', 'Tactical RPG'],
     link: 'https://game-hex-grid-4bj7.vercel.app/',
+    desktopDownload: 'https://github.com/YusukeWu0903/game-hex-grid/releases/download/v0.1.0/HexTactics-v0.1.0-Windows-x64.zip',
+    desktopVersion: 'v0.1.0',
     image: '/project-previews/hex-grid-godot-20261126.png',
     imageAlt: 'Godot 六角戰棋新版：艾爾開場劇情與中央寶箱關卡',
     badge: 'Godot 2D',
